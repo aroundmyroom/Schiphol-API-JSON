@@ -1,10 +1,13 @@
 # Schiphol-API-JSON
-This readme is part of development so can change
+This readme is part of development so can and will change
 
 Schiphol is the Dutch airport and they have made their data public through their API
 
 I have chosen to get the data as JSON and try to make something with PHP
-Please be awere: This author as totally no clue about coding but wants a number of things:
+
+At this time only some JSON is outputted and it needs to be put in HTML where options can be selected
+
+Please be aware: This author as totally no clue about coding but wants a number of things:
 
 Get data from the public Schiphol API and together we make a nice wepage of it so that users can lookup their flight and even find
 after landing their luggage belt
