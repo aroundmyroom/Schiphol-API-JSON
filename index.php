@@ -3,10 +3,7 @@
 // initial test getting simple arrival data from API SCHIPHOL
 // author Dennis Slagers has no coding skills, so any hickup is due to this
 
-$app_key='enter here api key';
-$app_id='enter here app id';
-$scheduletime=date("H:i");  
-
+require_once("config.php");
 require_once("nicejson.php");
 
 header('content-type: text/html; charset: utf-8');
@@ -16,7 +13,7 @@ echo <<<EOT
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 </head>
 <body>
-  <h1>JSON dump Schiphol Arrival Data Hour:MInute</h1>
+  <h1>JSON dump Schiphol Arrival Data Hour:Minute</h1>
   <pre>
 EOT;
 
@@ -24,7 +21,7 @@ EOT;
 
 $ch = curl_init();
 
-curl_setopt($ch, CURLOPT_URL, "https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$scheduletime&flightdirection=A&includedelays=false&page=0&sort=%2Bscheduletime");
+curl_setopt($ch, CURLOPT_URL, "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$scheduletime&flightdirection=A&includedelays=false&page=0&sort=%2Bscheduletime");
 
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, -1);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
