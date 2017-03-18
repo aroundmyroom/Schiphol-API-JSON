@@ -22,3 +22,72 @@ It is not allowed to cache or store these data for a longer period.
 Getting API access is free. You will get it at https://developer.schiphol.nl
 
 Please help me make a nice tool with it
+
+example data of one arrival
+
+stdClass Object
+(
+    [flights] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [id] => 121377240067832674
+                    [flightName] => OR580
+                    [scheduleDate] => 2017-03-18
+                    [flightDirection] => A
+                    [flightNumber] => 580
+                    [prefixIATA] => OR
+                    [prefixICAO] => TFL
+                    [scheduleTime] => 15:05:00
+                    [serviceType] => J
+                    [mainFlight] => OR580
+                    [codeshares] => 
+                    [estimatedLandingTime] => 2017-03-18T14:57:23.000+01:00
+                    [actualLandingTime] => 2017-03-18T14:57:23.000+01:00
+                    [publicEstimatedOffBlockTime] => 
+                    [actualOffBlockTime] => 
+                    [publicFlightState] => stdClass Object
+                        (
+                            [flightStates] => Array
+                                (
+                                    [0] => LND
+                                )
+
+                        )
+
+                    [route] => stdClass Object
+                        (
+                            [destinations] => Array
+                                (
+                                    [0] => TFS
+                                )
+
+                        )
+
+                    [terminal] => 3
+                    [gate] => D60
+                    [baggageClaim] => stdClass Object
+                        (
+                            [belts] => Array
+                                (
+                                    [0] => 18A
+                                )
+
+                        )
+
+                    [expectedTimeOnBelt] => 
+                    [checkinAllocations] => 
+                    [transferPositions] => 
+                    [aircraftType] => stdClass Object
+                        (
+                            [iatamain] => 73H
+                            [iatasub] => 73H
+                        )
+
+                    [aircraftRegistration] => PHTFC
+                    [airlineCode] => 231
+                    [expectedTimeGateOpen] => 
+                    [expectedTimeBoarding] => 
+                    [expectedTimeGateClosing] => 
+                    [schemaVersion] => 3
+                )
