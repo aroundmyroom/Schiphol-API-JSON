@@ -61,19 +61,19 @@ EOT;
 //            echo "<td><b><h3>Aankomst Vlucht:</h3></b>$flights->flightDirection</td>";
             echo "</tr>";
             echo "<tr>";
-            echo "<td><b>Aankomst Vluchtnummer:</b><br /> $flights->mainFlight</td>";
+            echo "<td><b>Arrival Flightnumber:</b><br /> $flights->mainFlight</td>";
             echo "</tr>";
             echo "<tr>";
-            echo "<td><b>Aankomstdatum:</b><br /> $flights->scheduleDate</td>";
+            echo "<td><b>Arrival Date:</b><br /> $flights->scheduleDate</td>";
             echo "</tr>";
             echo "<tr>";
-            echo "<td><b>Aankomst:</b><br /> $flights->scheduleTime</td>";
+            echo "<td><b>Schedule Arrival time:</b><br /> $flights->scheduleTime</td>";
             echo "</tr>";
             echo "<tr>";            
-            echo "<td><b>Verwachte landing:</b><br /> $flights->estimatedLandingTime</td>";
+            echo "<td><b>Expected Landing time:</b><br /> $flights->estimatedLandingTime</td>";
             echo "</tr>";
             echo "<tr>";
-            echo "<td><b>Is geland op:</b><br /> $flights->actualLandingTime</td>";
+            echo "<td><b>Flight has been landed at:</b><br /> $flights->actualLandingTime</td>";
             echo "<br /></tr>";
         }
 
