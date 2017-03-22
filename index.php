@@ -2,6 +2,9 @@
 
 // initial test getting simple arrival data from API SCHIPHOL
 // author Dennis Slagers has no coding skills, so any hickup is due to this
+// Credits to [DAOS] from tweakers.net fixing the json reading  it was all about [] and {}
+
+
 
 require_once("config.php");
 require_once("nicejson.php");
@@ -38,8 +41,55 @@ curl_close($ch);
 if (substr($result, 0, 3) == "\xEF\xBB\xBF") {
   $result = substr($result, 3);
 }
-echo htmlspecialchars(json_format($result));
 
-//var_dump(json_decode($result, true));
+// echo htmlspecialchars(json_format($result));
+
+$json = json_decode($result, true);
+
+
+   if (count($json['flights'])) 
+   foreach ($json['flights'] as $flights)  
+
+foreach ($json['flights'] as $flight)
+{
+    echo "Vluchtdatum: {$flight['scheduleDate']} <br />";
+    echo "Vluchtnaam: {$flight['flightName']} <br />";
+    echo "Geroosterde landingstijd: {$flight['scheduleTime']} <br />";
+    echo "Verwachte landingstijd: {$flight['estimatedLandingTime']} <br />";
+    echo "Daadwerkelijke landingstijd: {$flight['actualLandingTime']} <br />";
+    echo "Geparkeerd aan Gate: {$flight['gate']} <br />";
+
+    foreach ($flight['baggageClaim']['belts'] as $belt)
+    {
+        echo "Bagageband: {$belt} <br />";
+    }
+
+    foreach ($flight['route']['destinations'] as $departure)
+    {
+       echo "Vertrek luchthaven: {$departure} <br />";
+    }
+
+
+    foreach ($flight['codeshares']['codeshares'] as $joinedwith)
+    {
+      echo "Ook bekend onder Vluchtnummer: {$joinedwith} <br />";
+    }
+
+   foreach ($flight['publicFlightState']['flightStates'] as $status)
+   {
+     echo "Status van de vlucht: {$status} <br />";
+   }
+
+       echo "<br />";
+
+
+}
+
+ echo "<br />";
+
+// var_dump($json['flights'][0]['route']['destinations']);
+// var_dump($json['flights'][0]['flightName']);
+// var_dump($json['flights'][0]['scheduleDate']);
+// var_dump($json['flights'][0]['publicFlightState']['flightStates']);
 
 ?>
