@@ -16,7 +16,7 @@ echo <<<EOT
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 </head>
 <body>
-  <h1>JSON dump Schiphol Arrival Data Hour:Minute</h1>
+  <h1>Schiphol Arrival Data</h1>
   <pre>
 EOT;
 
