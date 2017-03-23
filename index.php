@@ -50,6 +50,7 @@ $json = json_decode($result, true);
    if (count($json['flights'])) 
 //   foreach ($json['flights'] as $flights)  
 
+
 foreach ($json['flights'] as $flight)
 {
 
@@ -59,6 +60,9 @@ foreach ($json['flights'] as $flight)
     echo "Verwachte landingstijd: {$flight['estimatedLandingTime']} <br />";
     echo "Daadwerkelijke landingstijd: {$flight['actualLandingTime']} <br />";
     echo "Geparkeerd aan Gate: {$flight['gate']} <br />";
+    echo "Aankomsthal: {$flight['terminal']} <br />";
+
+
 
     foreach ($flight['baggageClaim']['belts'] as $belt)
     {
