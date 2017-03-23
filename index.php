@@ -16,7 +16,7 @@ echo <<<EOT
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 </head>
 <body>
-  <h1>Schiphol Arrival Data</h1>
+  <h1>Schiphol Arrivals: $scheduletime</h1>
   <pre>
 EOT;
 
@@ -48,10 +48,11 @@ $json = json_decode($result, true);
 
 
    if (count($json['flights'])) 
-   foreach ($json['flights'] as $flights)  
+//   foreach ($json['flights'] as $flights)  
 
 foreach ($json['flights'] as $flight)
 {
+
     echo "Vluchtdatum: {$flight['scheduleDate']} <br />";
     echo "Vluchtnaam: {$flight['flightName']} <br />";
     echo "Geroosterde landingstijd: {$flight['scheduleTime']} <br />";
@@ -69,16 +70,18 @@ foreach ($json['flights'] as $flight)
        echo "Vertrek luchthaven: {$departure} <br />";
     }
 
-
     foreach ($flight['codeshares']['codeshares'] as $joinedwith)
     {
       echo "Ook bekend onder Vluchtnummer: {$joinedwith} <br />";
     }
 
-   foreach ($flight['publicFlightState']['flightStates'] as $status)
-   {
-     echo "Status van de vlucht: {$status} <br />";
-   }
+  
+    $status_new = $flight['publicFlightState']['flightStates'][0];
+    $status_old = $flight['publicFlightState']['flightStates'][1];
+
+	   echo "Status van de vlucht is: $status_new <br />";
+	   echo "Status van de vlucht was: $status_old <br />";
+
 
        echo "<br />";
 
@@ -86,10 +89,5 @@ foreach ($json['flights'] as $flight)
 }
 
  echo "<br />";
-
-// var_dump($json['flights'][0]['route']['destinations']);
-// var_dump($json['flights'][0]['flightName']);
-// var_dump($json['flights'][0]['scheduleDate']);
-// var_dump($json['flights'][0]['publicFlightState']['flightStates']);
 
 ?>
