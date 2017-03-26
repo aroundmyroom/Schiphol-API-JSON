@@ -54,10 +54,55 @@ $json = json_decode($result, true);
 foreach ($json['flights'] as $flight)
 {
 
+$eta = substr($flight['estimatedLandingTime'], strpos($flight['estimatedLandingTime'], "T") +1,8);
+$eta1=strtotime($eta);
+$eta2=strtotime($flight['scheduleTime']);
+$eta3 = abs($eta1-$eta2);
+$vertraging = gmdate("H:i:s", $eta3);
+//$vertraging = gmdate("H:i:s", ($eta1-$eta2));
+
+// debug en test info nog even laten staan
+
+//if ($eta1 > $eta2):
+
+//  echo "Vlucht is vertraagd ($vertraging)<br />";
+
+// elseif ($eta1 == $eta2):
+ 
+//    echo "Perfect op tijd <br />";
+
+//  else:
+
+//   echo "Vlucht eerder geland ($vertraging) <br />";
+// endif;
+
+
+//echo strtotime($eta);
+//echo "<br />";
+//echo strtotime($flight['scheduleTime']);
+//echo "<br /><br />";
+
     echo "Vluchtdatum: {$flight['scheduleDate']} <br />";
     echo "Vluchtnaam: {$flight['flightName']} <br />";
     echo "Geroosterde landingstijd: {$flight['scheduleTime']} <br />";
-    echo "Verwachte landingstijd: {$flight['estimatedLandingTime']} <br />";
+//    echo "Verwachte landingstijd: {$flight['estimatedLandingTime']} <br />";
+    echo "Verwachte landingstijd: $eta <br />";
+
+
+if ($eta1 > $eta2):
+
+  echo "Vlucht heeft nieuwe aankomsttijd. (Verschil: $vertraging)<br />";
+
+ elseif ($eta1 == $eta2):
+
+    echo "Perfect op tijd <br />";
+
+  else:
+
+   echo "Vlucht land waarschijnlijk eerder ($vertraging) <br />";
+endif;
+
+
     echo "Daadwerkelijke landingstijd: {$flight['actualLandingTime']} <br />";
     echo "Geparkeerd aan Gate: {$flight['gate']} <br />";
     echo "Aankomsthal: {$flight['terminal']} <br />";
@@ -117,7 +162,7 @@ $nlcity = ($json2['publicName']{'dutch'});
     $status_old = $flight['publicFlightState']['flightStates'][1];
 
 if (empty($status_new)) {
-    echo "Geen vluchtstatus momenteel";
+    echo "Geen vluchtstatus momenteel <br />";
 }
 
 
@@ -155,7 +200,7 @@ if (empty($status_new)) {
     }
 else{
 
-    echo "bladiebla";
+    echo "Einde van Vluchtinformatie <br />";
     echo "<br />";
 
 }
