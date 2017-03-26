@@ -52,6 +52,9 @@ $json = json_decode($result, true);
 foreach ($json['flights'] as $flight)
 {
 
+// datum wordt nu weggefilterd maar is hier en daar toch nodig (over de dag heen)
+// bij verwachte landingstijd de datum en tijd los weergeven
+
 $eta  = substr($flight['estimatedLandingTime'], strpos($flight['estimatedLandingTime'], "T") +1,8);
 $eta1 = strtotime($eta);
 $eta2 = strtotime($flight['scheduleTime']);
