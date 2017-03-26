@@ -3,7 +3,10 @@
 // initial test getting simple arrival data from API SCHIPHOL
 // author Dennis Slagers has no coding skills, so any hickup is due to this
 // Credits to [DAOS] from tweakers.net fixing the json reading  it was all about [] and {}
-
+// 
+// 26-3-2017: a lot of date and time stuff modified and changed.
+// 
+// This code is part of: https://github.com/aroundmyroom/Schiphol-API-JSON
 
 
 require_once("config.php");
@@ -20,7 +23,6 @@ echo <<<EOT
   <pre>
 EOT;
 
-// Example usage
 
 $ch = curl_init();
 
@@ -42,46 +44,19 @@ if (substr($result, 0, 3) == "\xEF\xBB\xBF") {
   $result = substr($result, 3);
 }
 
-// echo htmlspecialchars(json_format($result));
-
 $json = json_decode($result, true);
 
 
    if (count($json['flights'])) 
-//   foreach ($json['flights'] as $flights)  
-
 
 foreach ($json['flights'] as $flight)
 {
 
-$eta = substr($flight['estimatedLandingTime'], strpos($flight['estimatedLandingTime'], "T") +1,8);
-$eta1=strtotime($eta);
-$eta2=strtotime($flight['scheduleTime']);
+$eta  = substr($flight['estimatedLandingTime'], strpos($flight['estimatedLandingTime'], "T") +1,8);
+$eta1 = strtotime($eta);
+$eta2 = strtotime($flight['scheduleTime']);
 $eta3 = abs($eta1-$eta2);
 $vertraging = gmdate("H:i:s", $eta3);
-
-//$vertraging = gmdate("H:i:s", ($eta1-$eta2));
-
-// debug en test info nog even laten staan
-
-//if ($eta1 > $eta2):
-
-//  echo "Vlucht is vertraagd ($vertraging)<br />";
-
-// elseif ($eta1 == $eta2):
- 
-//    echo "Perfect op tijd <br />";
-
-//  else:
-
-//   echo "Vlucht eerder geland ($vertraging) <br />";
-// endif;
-
-
-//echo strtotime($eta);
-//echo "<br />";
-//echo strtotime($flight['scheduleTime']);
-//echo "<br /><br />";
 
     echo "Vluchtdatum: {$flight['scheduleDate']} <br />";
     echo "Vluchtnaam: {$flight['flightName']} <br />";
@@ -96,16 +71,17 @@ if (empty($typevlucht)) {
 
  if(!empty($typevlucht)){
      switch($typevlucht) {
-       case "": 
+
+	   case "": 
         Echo "Geen geldige waarde gevonden";
        break;
 
       case "J":
-         echo "Passagiers vlucht <br />";
+         echo "Vluchttype: Passagiers<br />";
        break;
 
       case "F":
-         echo "Cargo vlucht <br />";
+         echo "Vluchttype: Cargo <br />";
        break;
   
 //      default: 
@@ -113,19 +89,45 @@ if (empty($typevlucht)) {
 }
  
     }
+
+// deze snap ik nog even niet
 else{
 
     echo "Geen extra type vlucht informatie";
     echo "<br />";
 
 }	
-	
-	
-	
+
+// eerste opzet om het vliegtuigtype uit te lezen
+// https://api.schiphol.nl/public-flights/aircrafttypes?app_id=$app_id&app_key=$app_key&iatamain=74F&iatasub=74Y&page=0&sort=%2Biatamain
+
+// variabele voor test en json example output om uit te lezen
+
+// {
+//  "aircraftTypes": [
+//    {
+//      "longDescription": "BOEING 747-400F FREIGHTER",
+//      "shortDescription": "B747-400F",
+//      "schemaVersion": "1",
+//      "iatamain": "74F",
+//      "iatasub": "74Y"
+//    }
+//  ],
+//  "schemaVersion": "1"
+// }
+
+$iatamain="74F";
+$iatasub="74Y";
+
+echo "Vliegtuigtype main: {$flight['aircraftType']['iatamain']}<br />";
+echo "Vliegtuigtype sub: {$flight['aircraftType']['iatasub']}<br />";
+
+
+
+
 	
 	echo "Geroosterde landingstijd: {$flight['scheduleTime']} <br />";
-//    echo "Verwachte landingstijd: {$flight['estimatedLandingTime']} <br />";
-    echo "Verwachte landingstijd: $eta <br />";
+        echo "Verwachte landingstijd: $eta <br />";
 
 
 if ($eta1 > $eta2):
@@ -133,28 +135,27 @@ if ($eta1 > $eta2):
   echo "Vlucht heeft nieuwe aankomsttijd. (Verschil: $vertraging)<br />";
 
  elseif ($eta1 == $eta2):
-
     echo "Perfect op tijd <br />";
 
   else:
+   echo "Vlucht landt waarschijnlijk eerder ($vertraging) <br />";
 
-   echo "Vlucht land waarschijnlijk eerder ($vertraging) <br />";
 endif;
 
+$actuallandingtime = substr($flight['actualLandingTime'], strpos($flight['actualLandingTime'], "T") +1,8);
 
-    echo "Daadwerkelijke landingstijd: {$flight['actualLandingTime']} <br />";
+    echo "Vliegtuig is geland om: $actuallandingtime <br />";
     echo "Geparkeerd aan Gate: {$flight['gate']} <br />";
     echo "Aankomsthal: {$flight['terminal']} <br />";
-
-
 
     foreach ($flight['baggageClaim']['belts'] as $belt)
     {
         echo "Bagageband: {$belt} <br />";
     }
 
-    echo "Bagage verwacht om: {$flight['expectedTimeOnBelt']}<br />";
+   $bagagetijd  = substr($flight['expectedTimeOnBelt'], strpos($flight['expectedTimeOnBelt'], "T") +1,8);
 
+    echo "Bagage verwacht om: $bagagetijd <br />";
 
     foreach ($flight['codeshares']['codeshares'] as $joinedwith)
     {
@@ -163,6 +164,8 @@ endif;
 
     foreach ($flight['route']['destinations'] as $departure)
     {
+
+// 2e aanroep API om extra informatie van vertrek luchthaven op te halen
 
 $ch2 = curl_init();
 
@@ -195,10 +198,9 @@ $nlcity = ($json2['publicName']{'dutch'});
        echo "Vertrokken uit: $country <br />";
        echo "City code: $departure <br />";
 
-//       echo "Vertrek luchthaven: {$departure} <br />";
-
     }
 
+// indien er geen index 1 is dan volgt er nog een PHP error
 
     $status_new = $flight['publicFlightState']['flightStates'][0];
     $status_old = $flight['publicFlightState']['flightStates'][1];
@@ -207,6 +209,7 @@ if (empty($status_new)) {
     echo "Geen vluchtstatus momenteel <br />";
 }
 
+// Er zijn verschillende statussen. Niet alles ingegeven
 
  if(!empty($status_new)){
      switch($status_new) {
@@ -224,7 +227,7 @@ if (empty($status_new)) {
        break;
 
       case "FIR":
-        echo "Vlucht is in nederlands luchtruim <br /> <br />";
+        echo "Vlucht is in Nederlands luchtruim <br /> <br />";
        break;
 
       case "AIR":
@@ -248,15 +251,10 @@ else{
     echo "Einde van Vluchtinformatie <br />";
     echo "<br />";
 
+	}
 }
 
-}
-
-//	   echo "Status van de vlucht is: $status_new <br />";
-//	   echo "Status van de vlucht was: $status_old <br />";
-
-
-       echo "<br />";
+       echo "Met dank aan de vrije API van Schiphol<br />";
  echo "<br />";
 
 ?>
