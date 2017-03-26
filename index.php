@@ -59,6 +59,7 @@ $eta1=strtotime($eta);
 $eta2=strtotime($flight['scheduleTime']);
 $eta3 = abs($eta1-$eta2);
 $vertraging = gmdate("H:i:s", $eta3);
+
 //$vertraging = gmdate("H:i:s", ($eta1-$eta2));
 
 // debug en test info nog even laten staan
@@ -84,7 +85,45 @@ $vertraging = gmdate("H:i:s", $eta3);
 
     echo "Vluchtdatum: {$flight['scheduleDate']} <br />";
     echo "Vluchtnaam: {$flight['flightName']} <br />";
-    echo "Geroosterde landingstijd: {$flight['scheduleTime']} <br />";
+
+$typevlucht = $flight['serviceType'];
+
+
+if (empty($typevlucht)) {
+    echo "Vluchttype is onbekend <br />";
+}
+
+
+ if(!empty($typevlucht)){
+     switch($typevlucht) {
+       case "": 
+        Echo "Geen geldige waarde gevonden";
+       break;
+
+      case "J":
+         echo "Passagiers vlucht <br />";
+       break;
+
+      case "F":
+         echo "Cargo vlucht <br />";
+       break;
+  
+//      default: 
+//         echo "Verschillende type vluchten<br /> <br />";
+}
+ 
+    }
+else{
+
+    echo "Geen extra type vlucht informatie";
+    echo "<br />";
+
+}	
+	
+	
+	
+	
+	echo "Geroosterde landingstijd: {$flight['scheduleTime']} <br />";
 //    echo "Verwachte landingstijd: {$flight['estimatedLandingTime']} <br />";
     echo "Verwachte landingstijd: $eta <br />";
 
@@ -113,6 +152,9 @@ endif;
     {
         echo "Bagageband: {$belt} <br />";
     }
+
+    echo "Bagage verwacht om: {$flight['expectedTimeOnBelt']}<br />";
+
 
     foreach ($flight['codeshares']['codeshares'] as $joinedwith)
     {
@@ -193,8 +235,11 @@ if (empty($status_new)) {
          echo "Vlucht is gecancelled <br /><br />";     
         break;
   
-      default: 
-         echo "Hier mag wat staan als default<br /> <br />";
+      case "FIB";
+         echo "Eerste bagage is verwacht op de bagageband <br/><br />";
+         echo "Bagage verwacht om: {$flight['expectedTimeOnBelt']}<br />";
+//      default: 
+//         echo "Hier mag wat staan als default<br /> <br />";
 }
  
     }
