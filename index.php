@@ -56,11 +56,16 @@ foreach ($json['flights'] as $flight)
 // bij verwachte landingstijd de datum en tijd los weergeven
 
 $eta  = substr($flight['estimatedLandingTime'], strpos($flight['estimatedLandingTime'], "T") +1,8);
+$etadate = substr($flight['estimatedLandingTime'],0,10);
+$etadateswitch = date('d-m-Y', strtotime($etadate));
+
+
 $eta1 = strtotime($eta);
 $eta2 = strtotime($flight['scheduleTime']);
 $eta3 = abs($eta1-$eta2);
 $vertraging = gmdate("H:i:s", $eta3);
 
+    echo "$bla2 <br />";
     echo "Vluchtdatum: {$flight['scheduleDate']} <br />";
     echo "Vluchtnaam: {$flight['flightName']} <br />";
 
@@ -129,7 +134,7 @@ echo "Vliegtuigtype sub: {$flight['aircraftType']['iatasub']}<br />";
 
 
 	
-	echo "Geroosterde landingstijd: {$flight['scheduleTime']} <br />";
+	echo "Geroosterde landingstijd:$etadateswitch {$flight['scheduleTime']} <br />";
         echo "Verwachte landingstijd: $eta <br />";
 
 
