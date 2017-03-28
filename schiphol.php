@@ -1,7 +1,8 @@
 <?php
 
 $scheduletime = $_POST['scheduletime'];
-
+$datefrom=
+$dateto=
 
 // initial test getting simple arrival data from API SCHIPHOL
 // author Dennis Slagers has no coding skills, so any hickup is due to this
@@ -105,13 +106,13 @@ $datediff2arrival = (24/($datediffarrival/3600));
 
     echo "Vluchtnaam: {$flight['flightName']} <br />";
 
+
 $typevlucht = $flight['serviceType'];
 
 
 if (empty($typevlucht)) {
     echo "Vluchttype is onbekend <br />";
 	}
-
 
  if(!empty($typevlucht)){
      switch($typevlucht) {
@@ -136,7 +137,9 @@ if (empty($typevlucht)) {
          echo "Vluchttype: Cargo Charter <br />";
          break;
 
-
+      case "P":
+        echo "Vluchttype: Herpositionering / Ferry Vlucht <br />";
+        break;
 
 //      default: 
 //         echo "Verschillende type vluchten<br /> <br />";
@@ -177,8 +180,8 @@ $iatasub="74Y";
 
 echo "Vliegtuigtype main: {$flight['aircraftType']['iatamain']}<br />";
 echo "Vliegtuigtype sub: {$flight['aircraftType']['iatasub']}<br />";
-
-
+echo "Vliegtuigregistratie: {$flight['aircraftRegistration']}<br />";
+echo "Airlinecode: {$flight['airlineCode']}<br />";
 	
 // hoort hier niet:	echo "Geroosterde landingstijd:$etadateswitch {$flight['scheduleTime']} <br />";
 
@@ -215,7 +218,7 @@ $actuallandingtime = substr($flight['actualLandingTime'], strpos($flight['actual
 }
 
 
-    echo "Geparkeerd aan Gate: {$flight['gate']} <br />";
+    echo "Gate: {$flight['gate']} <br />";
 
 $terminal = $flight['terminal'];
 
@@ -266,7 +269,7 @@ else{
 
  else {
 
-    echo "Bagage verwacht om: $bagagetijd <br />";
+    echo "Eerste bagage op de band: $bagagetijd <br />";
 }
 
     foreach ($flight['codeshares']['codeshares'] as $joinedwith)
@@ -307,9 +310,9 @@ $city = ($json2{'city'});
 $country = ($json2{'country'});
 $nlcity = ($json2['publicName']{'dutch'});
 
-       echo "Vertrokken van luchthaven: $nlcity <br />";
-       echo "Vertrokken uit: $country <br />";
-       echo "City code: $departure <br />";
+       echo "Vertrokken van luchthaven: $nlcity ($departure) - $country<br />";
+//       echo "Vertrokken uit: $country <br />";
+//       echo "City code: $departure <br />";
 
     }
 
