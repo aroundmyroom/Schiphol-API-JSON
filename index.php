@@ -49,12 +49,22 @@ $("h1").replaceWith('<h1>Arrivals</h1>');
 <p id="invoer1"></p>
 
 <h1>Geef globale Landingstijd in</h1>
-<br />
-<form name="form1" action="/schiphol/aankomst/schiphol.php" method="post">
-<input type="time" name="scheduletime" value="12:00" size="5">
-<input type="submit" name="submit" value="submit">
- </form>
-</div>
+
+<?php
+// 1e form in PHP gezet omdat ik een default tijd gebaseerd op de huidige tijd wilde hebben
+// waarden tussen ""  moeten een escape krijgen wat via \ gedaan wordt
+
+$formdate = date("H:i");
+
+echo "<br />";
+
+echo "<form name=\"form1\" action=\"/schipholdev/aankomst/schiphol.php\" method=\"post\">";
+echo "<input type=\"time\" name=\"scheduletime\" value=\"$formdate\" size=\"5\">";
+echo "<input type=\"submit\" name=\"submit\" value=\"submit\">";
+echo " </form>";
+echo "</div>";
+?>
+
 <br /><br />
 <div id="data_invoer">
 <p id="invoer1"></p>
@@ -62,7 +72,7 @@ $("h1").replaceWith('<h1>Arrivals</h1>');
 <h1>of</h1>
 <h1>Geef vluchtnummer in</h1>
 <br />
-<form name="form1" action="/schiphol/aankomst/schiphol.php" method="post">
+<form name="form1" action="/schipholdev/aankomst/schiphol.php" method="post">
 <input type="text" name="flightnumber" value="" size="6" onkeydown="upperCaseF(this)">
 <input type="submit" name="submit" value="submit">
  </form>
