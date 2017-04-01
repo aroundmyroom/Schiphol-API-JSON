@@ -1,26 +1,28 @@
 # Schiphol-API-JSON
-This readme is part of development so can and will change
+March 2017
+Begonnen met niets... (en ik kan ook niet programmeren), dus weet ik wat ik doe? waarschijnlijk niet
 
-Schiphol is the Dutch airport and they have made their data public through their API
+Is de code gestructureerd? Kan vast en zeker beter. Code is compleet met NANO (linux) geschreven.
 
-I have chosen to get the data as JSON and try to make something with PHP
+Met hulp van Google.com en heel veel verschillende resultaten is het volgende inmiddels gerealiseerd:
 
-At this time only some JSON is outputted and it needs to be put in HTML where options can be selected
+- Data wordt opgehaald van de API van Schiphol in JSON formaat. 
+- Data wordt dan vertaald naar variabelen, hiervoor was hulp vanuit tweakers.net beschikbaar. Als nono wordt je wel met de neus op de
+  feiten gedrukt omdat er verwacht wordt dat je snapt wat je doet (uh uhhhh) .. 
 
-Please be aware: This author as totally no clue about coding but wants a number of things:
+- Nadat de de json goed geparsed cq. decoded kon worden ervoor gezorgd dat deze data in de browser kwam
+- Spelen met if, elseif, foreach etc.. hier zitten nog wat zwarte gaten omdat niet elke functie (bijv bij een 'case' functie met default)
+  helder is.
 
-Get data from the public Schiphol API and together we make a nice wepage of it so that users can lookup their flight and even find
-after landing their luggage belt
-Goal is to enter your flight number and whops .. there is the information
-Want to know what flights will be landed.. enter time etc.. In principle all available data is worth something.
+- Daarna goed gekeken naar schipholapp en ook de basis van de schipholapp gevonden op github (zoek op flightboard en je vind code uit 2012).
+  Deze code heb ik gebruikt om de basis van de CSS in de code te zetten
 
-Get a list of flighs departing and arriving at schiphol and get all the interesting data shown
+- Hierin ligt de uitdaging om vanuit een tabelstructuur de php informatie / variabelen te krijgen
 
-Any data obtained from the Flight API can be stored for a maximum of 24 hours. 
-It is not allowed to cache or store these data for a longer period.
+- Echte f*ckups gemaakt? Ja hoor, een commit met daarin mijn API gegevens .. OEPS.. maar
+  een 'git reset --hard [commitnumber]
+  en dan een git push origin HEAD --force zorgde dat de commit verwijderd werd want je kan wel reverten, maar dat helpt niet om je persoonlijke 
+  gegevens kwijt te raken
 
-Getting API access is free. You will get it at https://developer.schiphol.nl
+- Waarom doe ik dit? Gewoon om te kijken wat ik kan en ik wil vaak niet afhankelijk zijn van andere websites en als iemand wil helpen, graag
 
-Please help me make a nice tool with it
-
-example data of one arrival in example.json
