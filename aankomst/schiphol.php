@@ -17,7 +17,10 @@ $dateto=
 // 01-04-2017: 
 // start of implementation CSS derived from https://github.com/nckg/flightboard
 // This code is part of: https://github.com/aroundmyroom/Schiphol-API-JSON
-
+// most part of CSS finished
+//
+//
+// Following issue: how to use pagination when Link: is found in header when JSON is retrieved
 
 require_once("../config.php");
 // not needed anymore, for debug purposes only: require_once("../nicejson.php");
@@ -37,39 +40,13 @@ echo <<<EOT
  <script src="/schiphol/js/upkey.js"></script>
 
  <header>
-                <h1>Aankomsten</h1>
+                <h1><a href="../index.php" style="text-decoration: none">Aankomsten</a></h1>
     </header>
 
 <div id="date_time">
                         <p id="time"></p>
                         <p id="date"></p>
                 </div>
-
-<!-- the bigggest question is how to get the data in tdbody under the header with html and php -->
-
-       <table id="departures">
-                        <thead>
-                                <tr>
-                                        <th>Vluchtdatum</th>
-                                        <th>Vluchttijd</th>
-                                        <th>Naam</th>
-                                        <th>Type</th>
-                                        <th>Landingstijd</th>
-					<th>bagageband</th>
-					<th>bagagetijd</th>
-					<th>Luchthaven</th>
-					<th>Gate</th>
-					<th>Status</th>
-                                </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                </table>
-    </div>
-
-    <footer>
-
-
 
  <script src="/schiphol/js/script.js?v=1"></script>
 
@@ -78,17 +55,6 @@ if (screen.width<=950)
 $("h1").replaceWith('<h1>Arrivals</h1>');
 
 </script>
-
-
-  <h1>Controle tijd: $verwachtetijd
- <br />
-  of 
- <br /> 
-  Controle vluchtnaam: $flightname</h1>
-
-<br />
-Terug naar: <a href="../index.php">Ingave </a>
-<br />
 
   <pre>
 EOT;
@@ -166,57 +132,79 @@ $datediff2arrival = (24/($datediffarrival/3600));
 // echo "$flightname <br /><br />";
 
 
-    echo "Geplande vluchtdatum: $vluchtdatum <br />";
+echo "<table id=\"departures\">";
+echo "                        <thead>";
+echo "                                <tr>";
+echo "                                        <th>Planning</th>";
+echo "                                        <th>Vluchtinfo</th>";
+echo "                                        <th>Aankomsttijd</th>";
+echo "                                        <th>Aankomst</th>";
+echo "					      <th>Bagage</th>";
+echo "					      <th>Vertrek</th>";
+echo "                                </tr>";
+echo "                        </thead>";
+
+
+
+
+
+echo "<tbody>";
+    echo "<td>$vluchtdatum<br />";
 
  if ($datediff2arrival<1) {
 
-     echo "Vliegtuig komt op huidige dag aan <br />";
+     echo "Komt vandaag<br />";
 	}
 
  else {
 
-    echo "Er is een nieuwe aankomstdatum:  $etadateswitch +($datediff2arrival) <br />";
+    echo "Nieuwe datum:  $etadateswitch +($datediff2arrival)<br />";
 	}
 
-    echo "Geroosterde landingstijd: {$flight['scheduleTime']}<br />";
+    echo "Landing: {$flight['scheduleTime']}</td>";
+
 
 //    echo "Vluchtdatum: date('d-m-Y', strtotime({$flight['scheduleDate']}) <br />";
 
-    echo "Vluchtnaam: {$flight['flightName']} <br />";
+    echo "<td>Code 1: {$flight['flightName']} <br />";
 
+   foreach ($flight['codeshares']['codeshares'] as $joinedwith)
+    {
+     echo "Code 2: {$joinedwith}<br /> ";
+    }
 
 $typevlucht = $flight['serviceType'];
 
 
 if (empty($typevlucht)) {
-    echo "Vluchttype is onbekend <br />";
+    echo "Type is onbekend <br />";
 	}
 
  if(!empty($typevlucht)){
      switch($typevlucht) {
 
       case "": 
-        Echo "Geen geldige waarde gevonden";
+        Echo "NA";
        break;
 
       case "J":
-         echo "Vluchttype: lijnvlucht, passagiers<br />";
+         echo "Lijnvlucht<br />";
        break;
 
       case "F":
-         echo "Vluchttype: Cargo <br />";
+         echo "Cargo <br />";
        break;
   
       case "C":
-         echo "Vluchttype: Passagiers Charter <br />";
+         echo "Charter <br />";
        break;
 
       case "H":
-         echo "Vluchttype: Cargo Charter <br />";
+         echo "Cargo Charter <br />";
          break;
 
       case "P":
-        echo "Vluchttype: Herpositionering / Ferry Vlucht <br />";
+        echo "Herpositionering / Ferry Vlucht <br />";
         break;
 
 //      default: 
@@ -230,7 +218,7 @@ if (empty($typevlucht)) {
 
 else{
 
-    echo "Geen extra type vlucht informatie";
+    echo "Geen informatie";
     echo "<br />";
 
 	}	
@@ -256,29 +244,30 @@ else{
 $iatamain="74F";
 $iatasub="74Y";
 
-echo "Vliegtuigtype main: {$flight['aircraftType']['iatamain']}<br />";
-echo "Vliegtuigtype sub: {$flight['aircraftType']['iatasub']}<br />";
-echo "Vliegtuigregistratie: {$flight['aircraftRegistration']}<br />";
-echo "Airlinecode: {$flight['airlineCode']}<br />";
+echo "Type main: {$flight['aircraftType']['iatamain']}<br />";
+echo "Type sub: {$flight['aircraftType']['iatasub']}<br />";
+echo "Registratie: {$flight['aircraftRegistration']}<br />";
+echo "Code: {$flight['airlineCode']}<br /></td>";
 	
+
 // hoort hier niet:	echo "Geroosterde landingstijd:$etadateswitch {$flight['scheduleTime']} <br />";
 
-        echo "Verwachte landingstijd: $etadateswitch - $eta <br />";
+        echo "<td>$etadateswitch - $eta <br />";
 
 
 if ($datediff2arrival>0):
 
-echo "Vlucht is verzet naar andere datum, is vertraagd ($vertraging) <br />";
+echo "Andere datum, ($vertraging) <br />";
 
 elseif ($eta1 > $eta2):
 
-  echo "Vlucht heeft nieuwe aankomsttijd. (Verschil: $vertraging)<br />";
+  echo "Vertraging: $vertraging<br />";
 
  elseif ($eta1 == $eta2):
-    echo "Perfect op tijd <br />";
+    echo "Op tijd <br />";
 
   else:
-   echo "Vlucht landt waarschijnlijk eerder ($vertraging) <br />";
+   echo "Landt eerder ($vertraging) <br />";
 
 endif;
 
@@ -287,16 +276,16 @@ $actuallandingtime = substr($flight['actualLandingTime'], strpos($flight['actual
 
   if (empty($actuallandingtime)) {
 
-     echo "Er is nog officiele geen landingstijd bekend <br />";
+     echo "Geen landingstijd bekend <br /></td>";
 }
 
  else {
 
-    echo "Vliegtuig is geland om: $actuallandingtime <br />";
+    echo "Geland om: $actuallandingtime <br /></td>";
 }
 
 
-    echo "Gate: {$flight['gate']} <br />";
+    echo "<td>Gate: {$flight['gate']} <br />";
 
 $terminal = $flight['terminal'];
 
@@ -304,23 +293,23 @@ $terminal = $flight['terminal'];
 if(!empty($terminal)){
      switch($terminal) {
       case "":
-        Echo "Aankomst hal is anders dan verwacht <br />";
+        Echo "Hal anders <br />";
        break;
 
       case "1":
-         echo "Aankomsthal: 1 <br />";
+         echo "Hal: 1 <br />";
        break;
 
       case "2":
-         echo "Aankomsthal: 2<br />";
+         echo "Hal: 2<br />";
        break;
 
       case "3":
-        echo "Aankomsthal: 3 <br />";
+        echo "Hal: 3 <br />";
        break;
 
        case "4":
-        echo "Aankomsthal: 4 <br />";
+        echo "Hal: 4 <br />";
        break;
 
 		}
@@ -328,11 +317,77 @@ if(!empty($terminal)){
 
 else{
 
-    echo "Aankomsthal is onbekend<br />";
+    echo "Hal is onbekend<br />";
+
+        }
+
+// indien er geen index 1 is dan volgt er nog een PHP error
+// moet nog wat op verzonnen worden, iets met if empt of zo
+
+$status_new = $flight['publicFlightState']['flightStates'][0];
+$status_old = $flight['publicFlightState']['flightStates'][1];
+
+if (empty($status_new)) {
+    echo "N/A<br /></td>";
+}
+
+ if(!empty($status_new)){
+     switch($status_new) {
+       case "":
+        Echo "N/A2<br /></td>";
+       break;
+
+      case "SCH":
+         echo "Verwacht: ($status_new) <br />";
+           echo "Was: $status_old <br /></td>";
+       break;
+
+      case "LND":
+         echo "Vlucht is geland <br /></td>";
+       break;
+
+      case "FIR":
+        echo "Boven Nederland<br /></td>";
+       break;
+
+      case "AIR":
+         echo "Is onderweg <br /></td>";
+       break;
+
+      case "CNX":
+         echo "Gecancelled <br /></td>";
+        break;
+
+      case "FIB";
+         echo "Bagage verwacht<br/></td>";
+         break;
+
+      case "ARR":
+         echo "Afgehandeld<br /></td>";
+         break;
+
+       case "TOM":
+         echo "Komt op andere datum<br /></td>";
+         break;
+
+        case "DIV":
+         echo "Wijkt uit <br /></td>";
+         break;
+
+  }
+
+    }
+
+else{
+
+    echo "Einde van Vluchtinformatie <br /><br /></td>";
 
         }
 
 
+//////////////////////////////////
+
+    echo "<td>";
     foreach ($flight['baggageClaim']['belts'] as $belt)
     {
         echo "Bagageband: {$belt} <br />";
@@ -342,25 +397,25 @@ else{
 
    if (empty($bagagetijd)) {
 
-     echo "Er is nog geen tijd bekend voor de bagage <br />";
+     echo "Tijd onbekend<br /></td>";
 }
 
  else {
 
-    echo "Eerste bagage op de band: $bagagetijd <br />";
+    echo "Verwacht: $bagagetijd <br /></td>";
 }
 
-    foreach ($flight['codeshares']['codeshares'] as $joinedwith)
-    {
-     echo "Ook bekend onder Vluchtnummer: {$joinedwith} <br />";
-    }
 
-    foreach ($flight['route']['destinations'] as $departure)
-    {
 
 ///
 // 2e aanroep API om extra informatie van vertrek luchthaven op te halen
 ///
+
+echo "<td>";
+
+    foreach ($flight['route']['destinations'] as $departure)
+    {
+
 
 $ch2 = curl_init();
 
@@ -383,86 +438,38 @@ if (substr($results2, 0, 3) == "\xEF\xBB\xBF") {
 
 $json2 = json_decode($results2, true);
 
-
 $city = ($json2{'city'});
 $country = ($json2{'country'});
 $nlcity = ($json2['publicName']{'dutch'});
 
-       echo "Vertrokken van luchthaven: $nlcity ($departure) - $country<br />";
+       
+       echo "$nlcity ($departure)<br />";
+       echo "$country<br />";
+
 //       echo "Vertrokken uit: $country <br />";
 //       echo "City code: $departure <br />";
 
     }
+echo "</td>";
 
 // indien er geen index 1 is dan volgt er nog een PHP error
 // moet nog wat op verzonnen worden, iets met if empt of zo
 
-    $status_new = $flight['publicFlightState']['flightStates'][0];
-    $status_old = $flight['publicFlightState']['flightStates'][1];
 
-if (empty($status_new)) {
-    echo "Geen vluchtstatus momenteel <br />";
 }
 
+echo "                        </tbody>";
+echo "                </table>";
 
- if(!empty($status_new)){
-     switch($status_new) {
-       case "": 
-        Echo "Geen geldige waarde gevonden";
-       break;
+echo "<br />";
+echo "<h1>Controle <br>";
+echo "<br />";
+echo "tijd: $verwachtetijd";
+echo "<br />";
+echo "of";
+echo " <br />";
+echo "Vluchtnaam: $flightname</h1>";
 
-      case "SCH":
-         echo "Vlucht zal uitgevoerd worden: ($status_new) <br />";
-           echo "Status van de vlucht was: $status_old <br /><br />";  
-       break;
 
-      case "LND":
-         echo "Vlucht is geland <br /><br />";
-       break;
-
-      case "FIR":
-        echo "Vlucht is in Nederlands luchtruim <br /> <br />";
-       break;
-
-      case "AIR":
-         echo "Vlucht is nog onderweg <br /><br />";
-       break;
-
-      case "CNX":
-         echo "Vlucht is gecancelled <br /><br />";     
-        break;
-  
-      case "FIB";
-         echo "Eerste bagage is verwacht op de bagageband <br/><br />";
-         break;
-
-      case "ARR":
-         echo "Vlucht is compleet afgehandeld incl. bagage <br /><br />";
-         break;
-
-       case "TOM":
-         echo "Vlucht komt op andere datum binnen <br /><br />";
-         break;
-
-	case "DIV":
-         echo "Vlucht wijkt uit naar andere luchthaven <br /><br />";
-         break;
-
-//         echo "Bagage verwacht om: {$flight['expectedTimeOnBelt']}<br />";
-//      default: 
-//         echo "Hier mag wat staan als default<br /> <br />";
-}
- 
-    }
-else{
-
-    echo "Einde van Vluchtinformatie <br />";
-    echo "<br />";
-
-	}
-}
-
-       echo "Met dank aan de vrije API van Schiphol<br />";
- echo "<br />";
 
 ?>
