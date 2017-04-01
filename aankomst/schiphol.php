@@ -1,6 +1,10 @@
 <?php
+$scheduletime ='';
+$verwachtetijd = $_POST['scheduletime'];
+unset($scheduletime);
 
-$scheduletime = $_POST['scheduletime'];
+$flightname = $_POST['flightnumber'];
+
 $datefrom=
 $dateto=
 
@@ -10,22 +14,80 @@ $dateto=
 // 
 // 26-3-2017: a lot of date and time stuff modified and changed.
 // 
+// 01-04-2017: 
+// start of implementation CSS derived from https://github.com/nckg/flightboard
 // This code is part of: https://github.com/aroundmyroom/Schiphol-API-JSON
 
 
-require_once("config.php");
-require_once("nicejson.php");
+require_once("../config.php");
+// not needed anymore, for debug purposes only: require_once("../nicejson.php");
 
 header('content-type: text/html; charset: utf-8');
 echo <<<EOT
 <html>
 <head>
+
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="/schiphol/css/style.css" />
+  <script type="text/javascript" src="/schiphol/js/modernizr-1.5.min.js"></script>
 </head>
 <body>
-  <h1>Schiphol Arrivals: $scheduletime</h1>
+ <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+ <script src="/schiphol/js/jquery.ngclock.0.1.js"></script>
+ <script src="/schiphol/js/upkey.js"></script>
+
+ <header>
+                <h1>Aankomsten</h1>
+    </header>
+
+<div id="date_time">
+                        <p id="time"></p>
+                        <p id="date"></p>
+                </div>
+
+<!-- the bigggest question is how to get the data in tdbody under the header with html and php -->
+
+       <table id="departures">
+                        <thead>
+                                <tr>
+                                        <th>Vluchtdatum</th>
+                                        <th>Vluchttijd</th>
+                                        <th>Naam</th>
+                                        <th>Type</th>
+                                        <th>Landingstijd</th>
+					<th>bagageband</th>
+					<th>bagagetijd</th>
+					<th>Luchthaven</th>
+					<th>Gate</th>
+					<th>Status</th>
+                                </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                </table>
+    </div>
+
+    <footer>
+
+
+
+ <script src="/schiphol/js/script.js?v=1"></script>
+
+<script type="text/javascript">
+if (screen.width<=950)
+$("h1").replaceWith('<h1>Arrivals</h1>');
+
+</script>
+
+
+  <h1>Controle tijd: $verwachtetijd
+ <br />
+  of 
+ <br /> 
+  Controle vluchtnaam: $flightname</h1>
+
 <br />
-Terug naar: <a href="index.php">ingave tijd </a>
+Terug naar: <a href="../index.php">Ingave </a>
 <br />
 
   <pre>
@@ -33,19 +95,30 @@ EOT;
 
 
 $ch = curl_init();
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
 
-curl_setopt($ch, CURLOPT_URL, "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$scheduletime&flightdirection=A&includedelays=true&page=0&sort=%2Bscheduletime");
+if (!empty($verwachtetijd)) {
+
+curl_setopt($ch, CURLOPT_URL, "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$verwachtetijd&flightdirection=A&includedelays=true&page=0&sort=%2Bscheduletime");
+ }
+
+else {
+curl_setopt($ch, CURLOPT_URL, "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightname=$flightname&flightdirection=A&includedelays=true&page=0&sort=%2Bscheduletime");
+
+ }
 
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, -1);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
 
-
 $headers = array();
 $headers[] = "Accept: application/json";
 $headers[] = "Resourceversion: v3";
+
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+///////
 
 $result = curl_exec($ch);
+
 curl_close($ch);
 
 if (substr($result, 0, 3) == "\xEF\xBB\xBF") {
@@ -53,6 +126,7 @@ if (substr($result, 0, 3) == "\xEF\xBB\xBF") {
 }
 
 $json = json_decode($result, true);
+
 
 
    if (count($json['flights'])) 
@@ -87,6 +161,10 @@ $omzet4 = strtotime($etadate);
 $datediffarrival = abs(strtotime($testdatum4) - strtotime($testdatum0));
 $datediff2arrival = (24/($datediffarrival/3600));
 
+// echo "$scheduletime <br /><br />";
+// echo "$verwachtetijd <br /><br />";
+// echo "$flightname <br /><br />";
+
 
     echo "Geplande vluchtdatum: $vluchtdatum <br />";
 
@@ -100,7 +178,7 @@ $datediff2arrival = (24/($datediffarrival/3600));
     echo "Er is een nieuwe aankomstdatum:  $etadateswitch +($datediff2arrival) <br />";
 	}
 
-    echo "Geplande vluchttijd: {$flight['scheduleTime']}<br />";
+    echo "Geroosterde landingstijd: {$flight['scheduleTime']}<br />";
 
 //    echo "Vluchtdatum: date('d-m-Y', strtotime({$flight['scheduleDate']}) <br />";
 
@@ -209,7 +287,7 @@ $actuallandingtime = substr($flight['actualLandingTime'], strpos($flight['actual
 
   if (empty($actuallandingtime)) {
 
-     echo "Er is nog geen landingstijd bekend <br />";
+     echo "Er is nog officiele geen landingstijd bekend <br />";
 }
 
  else {
