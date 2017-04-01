@@ -1,8 +1,10 @@
 <?php
+if (!isset($_SESSION)){
+  session_start();
+}
 $scheduletime ='';
 $verwachtetijd = $_POST['scheduletime'];
 unset($scheduletime);
-
 $flightname = $_POST['flightnumber'];
 
 $datefrom=
@@ -94,7 +96,6 @@ if (substr($result, 0, 3) == "\xEF\xBB\xBF") {
 $json = json_decode($result, true);
 
 
-
    if (count($json['flights'])) 
 
 foreach ($json['flights'] as $flight)
@@ -161,7 +162,72 @@ echo "<tbody>";
     echo "Nieuwe datum:  $etadateswitch +($datediff2arrival)<br />";
 	}
 
-    echo "Landing: {$flight['scheduleTime']}</td>";
+    echo "Landing: {$flight['scheduleTime']}";
+    echo "<br />";
+
+
+$airline = $flight['prefixICAO'];
+
+$ch3 = curl_init();
+
+curl_setopt($ch3, CURLOPT_URL, "$base_url/public-flights/airlines/$airline?app_id=$app_id&app_key=$app_key");
+
+curl_setopt($ch3, CURLOPT_RETURNTRANSFER, -1);
+curl_setopt($ch3, CURLOPT_CUSTOMREQUEST, "GET");
+
+$headers = array();
+$headers[] = "Accept: application/json";
+$headers[] = "Resourceversion: v1";
+curl_setopt($ch3, CURLOPT_HTTPHEADER, $headers);
+
+$results3 = curl_exec($ch3);
+curl_close($ch3);
+
+if (substr($results3, 0, 3) == "\xEF\xBB\xBF") {
+  $results = substr($results3, 3);
+}
+
+$json2 = json_decode($results3, true);
+
+$airlineName = ($json2{'publicName'});
+
+
+ echo "$airlineName";
+
+$iatamain= $flight['aircraftType']['iatamain'];
+$iatasub = $flight['aircraftType']['iatasub'];
+
+echo "<br />";
+
+$ch4 = curl_init();
+
+curl_setopt($ch4, CURLOPT_URL, "$base_url/public-flights/aircrafttypes?app_id=$app_id&app_key=$app_key&iatamain=$iatamain&iatasub=$iatasub&page=0");
+
+
+curl_setopt($ch4, CURLOPT_RETURNTRANSFER, -1);
+curl_setopt($ch4, CURLOPT_CUSTOMREQUEST, "GET");
+
+$headers = array();
+$headers[] = "Accept: application/json";
+$headers[] = "Resourceversion: v1";
+curl_setopt($ch4, CURLOPT_HTTPHEADER, $headers);
+
+$results4 = curl_exec($ch4);
+curl_close($ch4);
+
+if (substr($results4, 0, 3) == "\xEF\xBB\xBF") {
+  $results = substr($results4, 3);
+}
+
+$json4 = json_decode($results4, true);
+
+
+$vliegtuigen = ($json4['aircraftTypes']);
+$vliegtuig = $vliegtuigen[0]['longDescription'];
+$vliegtuigtype = $vliegtuigen[0]['shortDescription'];
+
+echo "$vliegtuig <br /></td>";
+//echo " $vliegtuigtype <br /></td>";
 
 
 //    echo "Vluchtdatum: date('d-m-Y', strtotime({$flight['scheduleDate']}) <br />";
@@ -244,8 +310,8 @@ else{
 $iatamain="74F";
 $iatasub="74Y";
 
-echo "Type main: {$flight['aircraftType']['iatamain']}<br />";
-echo "Type sub: {$flight['aircraftType']['iatasub']}<br />";
+// echo "Type main: {$flight['aircraftType']['iatamain']}<br />";
+//echo "Type sub: {$flight['aircraftType']['iatasub']}<br />";
 echo "Registratie: {$flight['aircraftRegistration']}<br />";
 echo "Code: {$flight['airlineCode']}<br /></td>";
 	
@@ -276,7 +342,7 @@ $actuallandingtime = substr($flight['actualLandingTime'], strpos($flight['actual
 
   if (empty($actuallandingtime)) {
 
-     echo "Geen landingstijd bekend <br /></td>";
+     echo "Landingstijd onbekend <br /></td>";
 }
 
  else {
@@ -402,7 +468,7 @@ else{
 
  else {
 
-    echo "Verwacht: $bagagetijd <br /></td>";
+    echo "Om: $bagagetijd <br /></td>";
 }
 
 
