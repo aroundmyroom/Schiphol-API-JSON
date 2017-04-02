@@ -1,11 +1,11 @@
 <?php
-if (!isset($_SESSION)){
-  session_start();
-}
+
 $scheduletime ='';
 $verwachtetijd = $_POST['scheduletime'];
 unset($scheduletime);
 $flightname = $_POST['flightnumber'];
+
+
 
 $datefrom=
 $dateto=
@@ -46,9 +46,13 @@ echo <<<EOT
     </header>
 
 <div id="date_time">
-                        <p id="time"></p>
+                        <p id="time">
+</p>
+
                         <p id="date"></p>
                 </div>
+
+
 
  <script src="/schiphol/js/script.js?v=1"></script>
 
@@ -78,12 +82,27 @@ curl_setopt($ch, CURLOPT_URL, "$base_url/public-flights/flights?app_id=$app_id&a
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, -1);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
 
+///// Onderste 3 regels hier zijn om de JSON op te vragen ////
 $headers = array();
 $headers[] = "Accept: application/json";
 $headers[] = "Resourceversion: v3";
 
+/////// Get headers for pagination with Link: ///////////
+
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-///////
+$headers1 = [];
+curl_setopt($ch, CURLOPT_HEADERFUNCTION, 
+    function($curl, $header) use(&$headers1)
+{
+$len = strlen($header);
+$header = explode(':', $header, 2);
+   if (count($header) <2)
+   return $len;
+
+  $headers1[strtolower(trim($header[0]))] = trim($header[1]);
+  return $len;
+}
+);
 
 $result = curl_exec($ch);
 
@@ -92,6 +111,9 @@ curl_close($ch);
 if (substr($result, 0, 3) == "\xEF\xBB\xBF") {
   $result = substr($result, 3);
 }
+
+$url = ($headers1{'link'});
+preg_match_all('~<(.*)>; rel="(.*)"~Us', $url, $matches, PREG_SET_ORDER);
 
 $json = json_decode($result, true);
 
@@ -170,7 +192,7 @@ $airline = $flight['prefixICAO'];
 
 $ch3 = curl_init();
 
-curl_setopt($ch3, CURLOPT_URL, "$base_url/public-flights/airlines/$airline?app_id=$app_id&app_key=$app_key");
+curl_setopt($ch3, CURLOPT_URL, "$base_url/public-flights/airlines/$airline?app_id=$app_id&app_key=$app_key&page=0");
 
 curl_setopt($ch3, CURLOPT_RETURNTRANSFER, -1);
 curl_setopt($ch3, CURLOPT_CUSTOMREQUEST, "GET");
@@ -536,6 +558,24 @@ echo "of";
 echo " <br />";
 echo "Vluchtnaam: $flightname</h1>";
 
+
+$last = ($matches[0][1]);
+$next = ($matches[1][1]);
+$first = ($matches[2][1]);
+$previous = ($matches[3][1]);
+
+print_r($matches);
+ 
+
+Echo "Eerste pagina: $first";
+echo "<br /><br />";
+echo "Laatste pagina: $last";
+echo "<br /><br />";
+echo "volgende pagina: $next";
+echo "<br /><br />";
+echo "vorige pagina: $previous"; 
+echo "<br />";
+echo "<br/></br>";
 
 
 ?>
