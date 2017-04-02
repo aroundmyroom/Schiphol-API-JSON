@@ -1,11 +1,11 @@
 <?php
-
+if (!isset($_SESSION)){
+  session_start();
+}
 $scheduletime ='';
 $verwachtetijd = $_POST['scheduletime'];
 unset($scheduletime);
 $flightname = $_POST['flightnumber'];
-
-
 
 $datefrom=
 $dateto=
@@ -24,7 +24,7 @@ $dateto=
 //
 // Following issue: how to use pagination when Link: is found in header when JSON is retrieved
 
-require_once("../config.php");
+// require_once("../config.php");
 // not needed anymore, for debug purposes only: require_once("../nicejson.php");
 
 header('content-type: text/html; charset: utf-8');
@@ -42,17 +42,13 @@ echo <<<EOT
  <script src="/schiphol/js/upkey.js"></script>
 
  <header>
-                <h1><a href="../index.php" style="text-decoration: none">Aankomsten</a></h1>
+                <h1><a href="./index.php" style="text-decoration: none">Aankomsten</a></h1>
     </header>
 
 <div id="date_time">
-                        <p id="time">
-</p>
-
+                        <p id="time"></p>
                         <p id="date"></p>
                 </div>
-
-
 
  <script src="/schiphol/js/script.js?v=1"></script>
 
@@ -82,27 +78,12 @@ curl_setopt($ch, CURLOPT_URL, "$base_url/public-flights/flights?app_id=$app_id&a
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, -1);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
 
-///// Onderste 3 regels hier zijn om de JSON op te vragen ////
 $headers = array();
 $headers[] = "Accept: application/json";
 $headers[] = "Resourceversion: v3";
 
-/////// Get headers for pagination with Link: ///////////
-
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-$headers1 = [];
-curl_setopt($ch, CURLOPT_HEADERFUNCTION, 
-    function($curl, $header) use(&$headers1)
-{
-$len = strlen($header);
-$header = explode(':', $header, 2);
-   if (count($header) <2)
-   return $len;
-
-  $headers1[strtolower(trim($header[0]))] = trim($header[1]);
-  return $len;
-}
-);
+///////
 
 $result = curl_exec($ch);
 
@@ -111,9 +92,6 @@ curl_close($ch);
 if (substr($result, 0, 3) == "\xEF\xBB\xBF") {
   $result = substr($result, 3);
 }
-
-$url = ($headers1{'link'});
-preg_match_all('~<(.*)>; rel="(.*)"~Us', $url, $matches, PREG_SET_ORDER);
 
 $json = json_decode($result, true);
 
@@ -148,7 +126,11 @@ $testdatum4 = $etadate ;
 $omzet4 = strtotime($etadate);
 
 $datediffarrival = abs(strtotime($testdatum4) - strtotime($testdatum0));
+if ($datediffarrival <> 0) {
 $datediff2arrival = (24/($datediffarrival/3600));
+}
+else 
+$datediff2arrival = 0;
 
 // echo "$scheduletime <br /><br />";
 // echo "$verwachtetijd <br /><br />";
@@ -192,7 +174,7 @@ $airline = $flight['prefixICAO'];
 
 $ch3 = curl_init();
 
-curl_setopt($ch3, CURLOPT_URL, "$base_url/public-flights/airlines/$airline?app_id=$app_id&app_key=$app_key&page=0");
+curl_setopt($ch3, CURLOPT_URL, "$base_url/public-flights/airlines/$airline?app_id=$app_id&app_key=$app_key");
 
 curl_setopt($ch3, CURLOPT_RETURNTRANSFER, -1);
 curl_setopt($ch3, CURLOPT_CUSTOMREQUEST, "GET");
@@ -256,60 +238,30 @@ echo "$vliegtuig <br /></td>";
 
     echo "<td>Code 1: {$flight['flightName']} <br />";
 
-   foreach ($flight['codeshares']['codeshares'] as $joinedwith)
-    {
-     echo "Code 2: {$joinedwith}<br /> ";
-    }
+	 if (isset($flight['codeshares']['codeshares']))
+                        foreach ($flight['codeshares']['codeshares'] as $joinedwith)
+                        {
+                                echo "Code 2: {$joinedwith}<br /> ";
+                        }
 
-$typevlucht = $flight['serviceType'];
+                $typevlucht = $flight['serviceType'];
 
+                if (empty($typevlucht)) {
+                        echo "Type is onbekend <br />";
+                }
+                $vluchttypes = array(
+                        "J" => "Lijnvlucht",
+                        "F" => "Cargo",
+                        "C" => "Charte",
+                        "H" => "Cargo Charter",
+                        "P" => "Herpositionering / Ferry Vlucht"
+                );
+                $typevlucht = 'Type is onbekend';
+                if (isset($flight['serviceType']))
+                        if (array_key_exists($flight['serviceType'], $vluchttypes))
+                                $typevlucht =  $vluchttypes[$flight['serviceType']];
+                echo "$typevlucht<br />";
 
-if (empty($typevlucht)) {
-    echo "Type is onbekend <br />";
-	}
-
- if(!empty($typevlucht)){
-     switch($typevlucht) {
-
-      case "": 
-        Echo "NA";
-       break;
-
-      case "J":
-         echo "Lijnvlucht<br />";
-       break;
-
-      case "F":
-         echo "Cargo <br />";
-       break;
-  
-      case "C":
-         echo "Charter <br />";
-       break;
-
-      case "H":
-         echo "Cargo Charter <br />";
-         break;
-
-      case "P":
-        echo "Herpositionering / Ferry Vlucht <br />";
-        break;
-
-//      default: 
-//         echo "Verschillende type vluchten<br /> <br />";
-
-		}
- 
-    }
-
-// deze snap ik nog even niet
-
-else{
-
-    echo "Geen informatie";
-    echo "<br />";
-
-	}	
 
 // eerste opzet om het vliegtuigtype uit te lezen
 // https://api.schiphol.nl/public-flights/aircrafttypes?app_id=$app_id&app_key=$app_key&iatamain=74F&iatasub=74Y&page=0&sort=%2Biatamain
@@ -475,25 +427,16 @@ else{
 
 //////////////////////////////////
 
-    echo "<td>";
-    foreach ($flight['baggageClaim']['belts'] as $belt)
-    {
-        echo "Bagageband: {$belt} <br />";
-    }
 
-   $bagagetijd  = substr($flight['expectedTimeOnBelt'], strpos($flight['expectedTimeOnBelt'], "T") +1,8);
-
-   if (empty($bagagetijd)) {
-
-     echo "Tijd onbekend<br /></td>";
-}
-
- else {
-
-    echo "Om: $bagagetijd <br /></td>";
-}
-
-
+	 echo "          <td>";
+                if (isset($flight['baggageClaim']['belts']))
+                        foreach ($flight['baggageClaim']['belts'] as $belt)
+                                        echo "Bagageband: {$belt} <br />";
+                $bagagetijd  = substr($flight['expectedTimeOnBelt'], strpos($flight['expectedTimeOnBelt'], "T") +1,8);
+                if (empty($bagagetijd))
+                        echo "Tijd onbekend<br /></td>\n";
+                else
+                        echo "Om: $bagagetijd <br /></td>\n";
 
 ///
 // 2e aanroep API om extra informatie van vertrek luchthaven op te halen
@@ -558,24 +501,6 @@ echo "of";
 echo " <br />";
 echo "Vluchtnaam: $flightname</h1>";
 
-
-$last = ($matches[0][1]);
-$next = ($matches[1][1]);
-$first = ($matches[2][1]);
-$previous = ($matches[3][1]);
-
-print_r($matches);
- 
-
-Echo "Eerste pagina: $first";
-echo "<br /><br />";
-echo "Laatste pagina: $last";
-echo "<br /><br />";
-echo "volgende pagina: $next";
-echo "<br /><br />";
-echo "vorige pagina: $previous"; 
-echo "<br />";
-echo "<br/></br>";
 
 
 ?>

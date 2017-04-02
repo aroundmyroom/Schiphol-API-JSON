@@ -1,4 +1,6 @@
 # Schiphol-API-JSON
+Credits: met dank aan Peter aka Zaph voor aanpassingen en tips die ik heb kunnen gebruiken.
+
 March 2017
 Begonnen met niets... (en ik kan ook niet programmeren), dus weet ik wat ik doe? waarschijnlijk niet
 

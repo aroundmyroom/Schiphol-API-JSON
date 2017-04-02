@@ -1,3 +1,15 @@
+<?php
+error_reporting(E_ERROR + E_WARNING + E_STRICT);
+ini_set("display_errors", 1);
+date_default_timezone_set('Europe/Amsterdam');
+require_once("./config.php");
+if (count($_POST)) {
+    include_once("./aankomst/schiphol.php");
+    exit;
+}
+?>
+<!doctype html>
+
 <html>
 <head>
 
@@ -58,7 +70,7 @@ $formdate = date("H:i");
 
 echo "<br />";
 
-echo "<form name=\"form1\" action=\"/schipholdev/aankomst/schiphol.php\" method=\"post\">";
+echo "<form name=\"form1\" method=\"post\">";
 echo "<input type=\"time\" name=\"scheduletime\" value=\"$formdate\" size=\"5\">";
 echo "<input type=\"submit\" name=\"submit\" value=\"submit\">";
 echo " </form>";
@@ -72,7 +84,7 @@ echo "</div>";
 <h1>of</h1>
 <h1>Geef vluchtnummer in</h1>
 <br />
-<form name="form1" action="/schipholdev/aankomst/schiphol.php" method="post">
+<form name="form1" action="/schiphol/aankomst/schiphol.php" method="post">
 <input type="text" name="flightnumber" value="" size="6" onkeydown="upperCaseF(this)">
 <input type="submit" name="submit" value="submit">
  </form>
