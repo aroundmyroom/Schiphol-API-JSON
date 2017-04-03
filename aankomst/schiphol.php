@@ -109,7 +109,7 @@ EOT;
 
 	 else {
 
-	echo "Nieuwe datum:  $etadateswitch +($datediff2arrival)<br />";
+	echo "<span style=\"color: red;\">Wijziging:  $etadateswitch</span><br />"; /* +$datediff2arrival dag</span><br />"; */
 	}
 
 	echo "Landing: {$flight['scheduleTime']}";
@@ -175,7 +175,7 @@ EOT;
 		echo "<td>$etadateswitch - $eta <br />";
 
 	if ($datediff2arrival>0):
-		echo "Andere datum, ($vertraging) <br />";
+		echo "<span style=\"color: red;\">Grote vertraging</span><br />"; /* $vertraging) <br />"; */
 	
 	elseif ($eta1 > $eta2):
 
@@ -185,7 +185,7 @@ EOT;
 		echo "<span style=\"color: blue;\">Op tijd</span> <br />";
 
 	  else:
-		 echo "<span style=\"color: green;\">Landt eerder ($vertraging)</span> <br />";
+		 echo "<span style=\"color: green;\">Landt eerder: $vertraging</span> <br />";
 	
 	endif;
 
@@ -210,9 +210,9 @@ EOT;
 
 	$status_old = isset($flight['publicFlightState']['flightStates'][1]) ? $flight['publicFlightState']['flightStates'][1] : "Onbekend";
 
-                $status_new = "N/A2";
+                $status_new = "onbekend";
                 $statuswaardes = array(
-                        "SCH" => "Verwacht: ($status_new) <br />Was: $status_old ",
+                        "SCH" => "Landing: $status_new <br />Was: $status_old ",
                         "LND" => "Vlucht is geland",
                         "FIR" => "Boven Nederland",
                         "AIR" => "Is onderweg ",
