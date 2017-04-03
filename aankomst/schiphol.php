@@ -192,7 +192,7 @@ EOT;
 
 	$actuallandingtime = substr($flight['actualLandingTime'], strpos($flight['actualLandingTime'], "T") +1,8);
 	if (empty($actuallandingtime)) {
-     		echo "Nog onderweg <br /></td>";
+     		echo "Vliegt op route <br /></td>";
 	}
 
 	else {
@@ -266,16 +266,22 @@ EOT;
 	echo "                </table>";
 
 
+	if (!empty($flightname)) {
+		echo "<a href='?p=".($page)."&scheduletime=$verwachtetijd&flightnumber=$flightname'>Ververs Pagina</a>";
+	echo "<br />";
+	}
+        
+	else {
+
 	echo "<a href='?p=".($page-1)."&scheduletime=$verwachtetijd&flightnumber=$flightname'>Vorige Pagina</a>";
         echo "   |   ";
         echo "<a href='?p=".($page+1)."&scheduletime=$verwachtetijd&flightnumber=$flightname'>Volgende Pagina</a>";
 	echo "<br />";
-	echo "<a href='?p=".($page)."&scheduletime=$verwachtetijd&flightnumber=$flightname'>Ververs Pagina</a>"; 
-        
+        }
 
 
-
-// debug inforation
+/*
+// debug information [turn on when needed]
 
 
 echo "<br /><br /><br /><br />";
@@ -289,7 +295,6 @@ echo "Vluchtnaam: $flightname</h1>";
 echo "<br  />";
 echo "$url";
 
-
-
+*/
 
 ?>
