@@ -27,7 +27,11 @@
 		 <script src="/schiphol/js/upkey.js"></script>
 
 	 <header>
-                 <h1><a href="./index.php" style="text-decoration: none">Aankomsten</a></h1>
+<!--                 <h1><a href="./index.php" style="text-decoration: none">Aankomsten</a></h1> -->
+
+   <h1><img src="./css/airplane_arrival.png" width='75' alt='Aankomsten'><a href="./index.php" style="text-decoration: none">Aankomsten</a>  <img src="./css/arrivals_low.png" width='75'></h1>
+
+
 		
 		 </header>
 
