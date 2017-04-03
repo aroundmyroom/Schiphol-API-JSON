@@ -3,10 +3,18 @@ error_reporting(E_ERROR + E_WARNING + E_STRICT);
 ini_set("display_errors", 1);
 date_default_timezone_set('Europe/Amsterdam');
 require_once("./config.php");
+require_once("./functions/functions.php");
+
 if (count($_POST)) {
-    include_once("./aankomst/schiphol.php");
-    exit;
+                $url = "?p=0&scheduletime=".$_POST['scheduletime']."&flightnumber=".$_POST['flightnumber'];
+                header("Location: $url");
+                exit;
 }
+if ($_GET['scheduletime'] || $_GET['flightnumber']) {
+                include_once("./aankomst/schiphol.php");
+                exit;
+}
+
 ?>
 <!doctype html>
 
@@ -66,7 +74,7 @@ $("h1").replaceWith('<h1>Arrivals</h1>');
 // 1e form in PHP gezet omdat ik een default tijd gebaseerd op de huidige tijd wilde hebben
 // waarden tussen ""  moeten een escape krijgen wat via \ gedaan wordt
 
-$formdate = date("H:i");
+ $formdate = date("H:i");
 
 echo "<br />";
 
@@ -84,8 +92,8 @@ echo "</div>";
 <h1>of</h1>
 <h1>Geef vluchtnummer in</h1>
 <br />
-<form name="form1" action="/schiphol/aankomst/schiphol.php" method="post">
-<input type="text" name="flightnumber" value="" size="6" onkeydown="upperCaseF(this)">
+<form name="form1" method="post">
+<input type="text" name="flightnumber" value="" size="7" onkeydown="upperCaseF(this)">
 <input type="submit" name="submit" value="submit">
  </form>
 

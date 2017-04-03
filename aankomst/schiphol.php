@@ -1,258 +1,165 @@
 <?php
-if (!isset($_SESSION)){
-  session_start();
-}
-$scheduletime ='';
-$verwachtetijd = $_POST['scheduletime'];
-unset($scheduletime);
-$flightname = $_POST['flightnumber'];
+	if (!isset($_SESSION)){
+	session_start();
+	}
 
-$datefrom=
-$dateto=
+	$scheduletime ='';
+	$verwachtetijd = $_GET['scheduletime'];
+	unset($scheduletime);
+	$flightname = $_GET['flightnumber'];
 
-// initial test getting simple arrival data from API SCHIPHOL
-// author Dennis Slagers has no coding skills, so any hickup is due to this
-// Credits to [DAOS] from tweakers.net fixing the json reading  it was all about [] and {}
-// 
-// 26-3-2017: a lot of date and time stuff modified and changed.
-// 
-// 01-04-2017: 
-// start of implementation CSS derived from https://github.com/nckg/flightboard
-// This code is part of: https://github.com/aroundmyroom/Schiphol-API-JSON
-// most part of CSS finished
-//
-//
-// Following issue: how to use pagination when Link: is found in header when JSON is retrieved
+	$datefrom=null;
+	$dateto=null;
 
-// require_once("../config.php");
-// not needed anymore, for debug purposes only: require_once("../nicejson.php");
+	header('content-type: text/html; charset: utf-8');
+	echo <<<EOT
+	<html>
+	<head>
 
-header('content-type: text/html; charset: utf-8');
-echo <<<EOT
-<html>
-<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<link rel="stylesheet" href="/schiphol/css/style.css" />
+		<script type="text/javascript" src="/schiphol/js/modernizr-1.5.min.js"></script>
+	</head>
+	<body>
 
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <link rel="stylesheet" href="/schiphol/css/style.css" />
-  <script type="text/javascript" src="/schiphol/js/modernizr-1.5.min.js"></script>
-</head>
-<body>
- <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
- <script src="/schiphol/js/jquery.ngclock.0.1.js"></script>
- <script src="/schiphol/js/upkey.js"></script>
+		 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+		 <script src="/schiphol/js/jquery.ngclock.0.1.js"></script>
+		 <script src="/schiphol/js/upkey.js"></script>
 
- <header>
-                <h1><a href="./index.php" style="text-decoration: none">Aankomsten</a></h1>
-    </header>
+	 <header>
+                 <h1><a href="./index.php" style="text-decoration: none">Aankomsten</a></h1>
+		
+		 </header>
 
-<div id="date_time">
-                        <p id="time"></p>
-                        <p id="date"></p>
-                </div>
+	<div id="date_time">
+        	<p id="time"></p>
+                <p id="date"></p>
+	</div>
 
- <script src="/schiphol/js/script.js?v=1"></script>
+		 <script src="/schiphol/js/script.js?v=1"></script>
 
-<script type="text/javascript">
-if (screen.width<=950)
-$("h1").replaceWith('<h1>Arrivals</h1>');
+		<script type="text/javascript">
+		if (screen.width<=950)
+		$("h1").replaceWith('<h1>Arrivals</h1>');
+	</script>
 
-</script>
-
-  <pre>
+	<pre>
 EOT;
 
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+	$url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightname=$flightname&flightdirection=A&includedelays=true&sort=%2Bscheduletime";
+//  $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightname=$flightname&flightdirection=A&includedelays=true&page=0&sort=%2Bscheduletime";
+		if (!empty($verwachtetijd))
+//        $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$verwachtetijd&flightdirection=A&includedelays=true&page=0&sort=%2Bscheduletime";
+        $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$verwachtetijd&flightdirection=A&includedelays=true&page=$page&sort=%2Bscheduletime";
 
-if (!empty($verwachtetijd)) {
+		list($result, $headers) = doCurl($url, 'v3');
+		preg_match_all('~<(.*)>; rel="(.*)"~Us', $headers['link'], $matches, PREG_SET_ORDER);
+		$json = json_decode($result, true);
 
-curl_setopt($ch, CURLOPT_URL, "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$verwachtetijd&flightdirection=A&includedelays=true&page=0&sort=%2Bscheduletime");
- }
-
-else {
-curl_setopt($ch, CURLOPT_URL, "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightname=$flightname&flightdirection=A&includedelays=true&page=0&sort=%2Bscheduletime");
-
- }
-
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, -1);
-curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-
-$headers = array();
-$headers[] = "Accept: application/json";
-$headers[] = "Resourceversion: v3";
-
-curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-///////
-
-$result = curl_exec($ch);
-
-curl_close($ch);
-
-if (substr($result, 0, 3) == "\xEF\xBB\xBF") {
-  $result = substr($result, 3);
-}
-
-$json = json_decode($result, true);
+		if (count($json['flights']))
+		        foreach ($json['flights'] as $flight)
+	        {
 
 
-   if (count($json['flights'])) 
+	$eta  = substr($flight['estimatedLandingTime'], strpos($flight['estimatedLandingTime'], "T") +1,8);
+	$etadate = substr($flight['estimatedLandingTime'],0,10);
+	$etadateswitch = date('d-m-Y', strtotime($etadate));
 
-foreach ($json['flights'] as $flight)
-{
+	$eta1 = strtotime($eta);
+	$eta2 = strtotime($flight['scheduleTime']);
+	$eta3 = abs($eta1-$eta2);
+	$vertraging = gmdate("H:i:s", $eta3);
+	$vluchtdatum = date('d-m-Y', strtotime($flight['scheduleDate']));
 
-// datum wordt nu weggefilterd maar is hier en daar toch nodig (over de dag heen)
-// bij verwachte landingstijd de datum en tijd los weergeven
-// onderstaande is om wat dingen om te zetten en wat uit te rekenen
+	$testdatum0 = ($flight['scheduleDate']);
 
-$eta  = substr($flight['estimatedLandingTime'], strpos($flight['estimatedLandingTime'], "T") +1,8);
-$etadate = substr($flight['estimatedLandingTime'],0,10);
-$etadateswitch = date('d-m-Y', strtotime($etadate));
-
-$eta1 = strtotime($eta);
-$eta2 = strtotime($flight['scheduleTime']);
-$eta3 = abs($eta1-$eta2);
-$vertraging = gmdate("H:i:s", $eta3);
-$vluchtdatum = date('d-m-Y', strtotime($flight['scheduleDate']));
-
-$testdatum0 = ($flight['scheduleDate']);
-$testdatum1 = strtotime($testdatum0);
-
-$testdatum2 = strtotime($vluchtdatum);
-$testdatum3 = ($etadate - $testdatum1);
-
-$testdatum4 = $etadate ;
-
-$omzet4 = strtotime($etadate);
-
-$datediffarrival = abs(strtotime($testdatum4) - strtotime($testdatum0));
-if ($datediffarrival <> 0) {
-$datediff2arrival = (24/($datediffarrival/3600));
-}
-else 
-$datediff2arrival = 0;
-
-// echo "$scheduletime <br /><br />";
-// echo "$verwachtetijd <br /><br />";
-// echo "$flightname <br /><br />";
+	$testdatum4 = $etadate ;
 
 
-echo "<table id=\"departures\">";
-echo "                        <thead>";
-echo "                                <tr>";
-echo "                                        <th>Planning</th>";
-echo "                                        <th>Vluchtinfo</th>";
-echo "                                        <th>Aankomsttijd</th>";
-echo "                                        <th>Aankomst</th>";
-echo "					      <th>Bagage</th>";
-echo "					      <th>Vertrek</th>";
-echo "                                </tr>";
-echo "                        </thead>";
+	$datediffarrival = abs(strtotime($testdatum4) - strtotime($testdatum0));
+
+        // delen door 0 geeft foutmelding
+	if ($datediffarrival <> 0) {
+	$datediff2arrival = (24/($datediffarrival/3600));
+	}
+	else 
+	$datediff2arrival = 0;
 
 
+	echo "<table id=\"departures\">";
+	echo "		<thead>";
+	echo "		<tr>";
+	echo "		<th>Planning</th>";
+	echo "		<th>Vluchtinfo</th>";
+	echo "		<th>Aankomsttijd</th>";
+	echo "		<th>Aankomst</th>";
+	echo "		<th>Bagage</th>";
+	echo "		<th>Vertrek</th>";
+	echo "		</tr>";
+	echo "		</thead>";
 
+	echo "<tbody>";
+	echo "<td>$vluchtdatum<br />";
 
+	 if ($datediff2arrival<1) {
 
-echo "<tbody>";
-    echo "<td>$vluchtdatum<br />";
-
- if ($datediff2arrival<1) {
-
-     echo "Komt vandaag<br />";
+	echo "Komt vandaag<br />";
 	}
 
- else {
+	 else {
 
-    echo "Nieuwe datum:  $etadateswitch +($datediff2arrival)<br />";
+	echo "Nieuwe datum:  $etadateswitch +($datediff2arrival)<br />";
 	}
 
-    echo "Landing: {$flight['scheduleTime']}";
-    echo "<br />";
+	echo "Landing: {$flight['scheduleTime']}";
+	echo "<br />";
 
 
-$airline = $flight['prefixICAO'];
+	$airline = $flight['prefixICAO'];
 
-$ch3 = curl_init();
-
-curl_setopt($ch3, CURLOPT_URL, "$base_url/public-flights/airlines/$airline?app_id=$app_id&app_key=$app_key");
-
-curl_setopt($ch3, CURLOPT_RETURNTRANSFER, -1);
-curl_setopt($ch3, CURLOPT_CUSTOMREQUEST, "GET");
-
-$headers = array();
-$headers[] = "Accept: application/json";
-$headers[] = "Resourceversion: v1";
-curl_setopt($ch3, CURLOPT_HTTPHEADER, $headers);
-
-$results3 = curl_exec($ch3);
-curl_close($ch3);
-
-if (substr($results3, 0, 3) == "\xEF\xBB\xBF") {
-  $results = substr($results3, 3);
-}
-
-$json2 = json_decode($results3, true);
-
-$airlineName = ($json2{'publicName'});
+	list($results, $headers) = doCurl("$base_url/public-flights/airlines/$airline?app_id=$app_id&app_key=$app_key&page=0");
 
 
- echo "$airlineName";
+        $json2 = json_decode($results, true);
 
-$iatamain= $flight['aircraftType']['iatamain'];
-$iatasub = $flight['aircraftType']['iatasub'];
-
-echo "<br />";
-
-$ch4 = curl_init();
-
-curl_setopt($ch4, CURLOPT_URL, "$base_url/public-flights/aircrafttypes?app_id=$app_id&app_key=$app_key&iatamain=$iatamain&iatasub=$iatasub&page=0");
+	$airlineName = ($json2{'publicName'});
 
 
-curl_setopt($ch4, CURLOPT_RETURNTRANSFER, -1);
-curl_setopt($ch4, CURLOPT_CUSTOMREQUEST, "GET");
+		 echo "$airlineName";
 
-$headers = array();
-$headers[] = "Accept: application/json";
-$headers[] = "Resourceversion: v1";
-curl_setopt($ch4, CURLOPT_HTTPHEADER, $headers);
+	$iatamain= $flight['aircraftType']['iatamain'];
+	$iatasub = $flight['aircraftType']['iatasub'];
 
-$results4 = curl_exec($ch4);
-curl_close($ch4);
+		echo "<br />";
 
-if (substr($results4, 0, 3) == "\xEF\xBB\xBF") {
-  $results = substr($results4, 3);
-}
+	 list($results, $headers) = doCurl("$base_url/public-flights/aircrafttypes?app_id=$app_id&app_key=$app_key&iatamain=$iatamain&iatasub=$iatasub&page=0");
+                $json4 = json_decode($results, true);
 
-$json4 = json_decode($results4, true);
+	$vliegtuigen = ($json4['aircraftTypes']);
+	$vliegtuig = $vliegtuigen[0]['longDescription'];
+	$vliegtuigtype = $vliegtuigen[0]['shortDescription'];
 
+	echo "$vliegtuig <br /></td>";
+		
 
-$vliegtuigen = ($json4['aircraftTypes']);
-$vliegtuig = $vliegtuigen[0]['longDescription'];
-$vliegtuigtype = $vliegtuigen[0]['shortDescription'];
+	echo "<td><span style=\"color: blue;\">Code: {$flight['flightName']}</span>";
 
-echo "$vliegtuig <br /></td>";
-//echo " $vliegtuigtype <br /></td>";
-
-
-//    echo "Vluchtdatum: date('d-m-Y', strtotime({$flight['scheduleDate']}) <br />";
-
-    echo "<td>Code 1: {$flight['flightName']} <br />";
-
-	 if (isset($flight['codeshares']['codeshares']))
-                        foreach ($flight['codeshares']['codeshares'] as $joinedwith)
-                        {
-                                echo "Code 2: {$joinedwith}<br /> ";
-                        }
+	if (isset($flight['codeshares']['codeshares']))
+        	foreach ($flight['codeshares']['codeshares'] as $joinedwith)
+		{
+                       	echo "<span style=\"color: grey;\"><br />Code: {$joinedwith}</span>";
+                }
 
                 $typevlucht = $flight['serviceType'];
-
+			echo "<br />";
                 if (empty($typevlucht)) {
                         echo "Type is onbekend <br />";
                 }
                 $vluchttypes = array(
                         "J" => "Lijnvlucht",
-                        "F" => "Cargo",
-                        "C" => "Charte",
+                        "F" => "<span style=\"color: LightCoral;\">Cargo</span>",
+                        "C" => "Charter",
                         "H" => "Cargo Charter",
                         "P" => "Herpositionering / Ferry Vlucht"
                 );
@@ -263,169 +170,65 @@ echo "$vliegtuig <br /></td>";
                 echo "$typevlucht<br />";
 
 
-// eerste opzet om het vliegtuigtype uit te lezen
-// https://api.schiphol.nl/public-flights/aircrafttypes?app_id=$app_id&app_key=$app_key&iatamain=74F&iatasub=74Y&page=0&sort=%2Biatamain
+		echo "Registratie: {$flight['aircraftRegistration']}<br />";
+		echo "Code: {$flight['airlineCode']}<br /></td>";
+		echo "<td>$etadateswitch - $eta <br />";
 
-// variabele voor test en json example output om uit te lezen
-
-// {
-//  "aircraftTypes": [
-//    {
-//      "longDescription": "BOEING 747-400F FREIGHTER",
-//      "shortDescription": "B747-400F",
-//      "schemaVersion": "1",
-//      "iatamain": "74F",
-//      "iatasub": "74Y"
-//    }
-//  ],
-//  "schemaVersion": "1"
-// }
-
-$iatamain="74F";
-$iatasub="74Y";
-
-// echo "Type main: {$flight['aircraftType']['iatamain']}<br />";
-//echo "Type sub: {$flight['aircraftType']['iatasub']}<br />";
-echo "Registratie: {$flight['aircraftRegistration']}<br />";
-echo "Code: {$flight['airlineCode']}<br /></td>";
+	if ($datediff2arrival>0):
+		echo "Andere datum, ($vertraging) <br />";
 	
+	elseif ($eta1 > $eta2):
 
-// hoort hier niet:	echo "Geroosterde landingstijd:$etadateswitch {$flight['scheduleTime']} <br />";
+		echo "<span style=\"color: red;\">Vertraging: $vertraging</span><br />";
+	
+	 elseif ($eta1 == $eta2):
+		echo "<span style=\"color: blue;\">Op tijd</span> <br />";
 
-        echo "<td>$etadateswitch - $eta <br />";
-
-
-if ($datediff2arrival>0):
-
-echo "Andere datum, ($vertraging) <br />";
-
-elseif ($eta1 > $eta2):
-
-  echo "Vertraging: $vertraging<br />";
-
- elseif ($eta1 == $eta2):
-    echo "Op tijd <br />";
-
-  else:
-   echo "Landt eerder ($vertraging) <br />";
-
-endif;
+	  else:
+		 echo "<span style=\"color: green;\">Landt eerder ($vertraging)</span> <br />";
+	
+	endif;
 
 
-$actuallandingtime = substr($flight['actualLandingTime'], strpos($flight['actualLandingTime'], "T") +1,8);
-
-  if (empty($actuallandingtime)) {
-
-     echo "Landingstijd onbekend <br /></td>";
-}
-
- else {
-
-    echo "Geland om: $actuallandingtime <br /></td>";
-}
-
-
-    echo "<td>Gate: {$flight['gate']} <br />";
-
-$terminal = $flight['terminal'];
-
-
-if(!empty($terminal)){
-     switch($terminal) {
-      case "":
-        Echo "Hal anders <br />";
-       break;
-
-      case "1":
-         echo "Hal: 1 <br />";
-       break;
-
-      case "2":
-         echo "Hal: 2<br />";
-       break;
-
-      case "3":
-        echo "Hal: 3 <br />";
-       break;
-
-       case "4":
-        echo "Hal: 4 <br />";
-       break;
-
-		}
+	$actuallandingtime = substr($flight['actualLandingTime'], strpos($flight['actualLandingTime'], "T") +1,8);
+	if (empty($actuallandingtime)) {
+     		echo "Nog onderweg <br /></td>";
 	}
 
-else{
+	else {
+		echo "<span style=\"color: green;\">Geland om: $actuallandingtime</span> <br /></td>";
+	}
 
-    echo "Hal is onbekend<br />";
+	echo "<td>Gate: {$flight['gate']} <br />";
 
-        }
-
-// indien er geen index 1 is dan volgt er nog een PHP error
-// moet nog wat op verzonnen worden, iets met if empt of zo
-
-$status_new = $flight['publicFlightState']['flightStates'][0];
-$status_old = $flight['publicFlightState']['flightStates'][1];
-
-if (empty($status_new)) {
-    echo "N/A<br /></td>";
-}
-
- if(!empty($status_new)){
-     switch($status_new) {
-       case "":
-        Echo "N/A2<br /></td>";
-       break;
-
-      case "SCH":
-         echo "Verwacht: ($status_new) <br />";
-           echo "Was: $status_old <br /></td>";
-       break;
-
-      case "LND":
-         echo "Vlucht is geland <br /></td>";
-       break;
-
-      case "FIR":
-        echo "Boven Nederland<br /></td>";
-       break;
-
-      case "AIR":
-         echo "Is onderweg <br /></td>";
-       break;
-
-      case "CNX":
-         echo "Gecancelled <br /></td>";
-        break;
-
-      case "FIB";
-         echo "Bagage verwacht<br/></td>";
-         break;
-
-      case "ARR":
-         echo "Afgehandeld<br /></td>";
-         break;
-
-       case "TOM":
-         echo "Komt op andere datum<br /></td>";
-         break;
-
-        case "DIV":
-         echo "Wijkt uit <br /></td>";
-         break;
-
-  }
-
-    }
-
-else{
-
-    echo "Einde van Vluchtinformatie <br /><br /></td>";
-
-        }
+	$terminal = "Hal: onbekend";
+                if (isset($flight['terminal']))
+                        $terminal = "Hal: ".$flight['terminal'];
+                echo "$terminal<br />";
 
 
-//////////////////////////////////
+
+	$status_old = isset($flight['publicFlightState']['flightStates'][1]) ? $flight['publicFlightState']['flightStates'][1] : "Onbekend";
+
+                $status_new = "N/A2";
+                $statuswaardes = array(
+                        "SCH" => "Verwacht: ($status_new) <br />Was: $status_old ",
+                        "LND" => "Vlucht is geland",
+                        "FIR" => "Boven Nederland",
+                        "AIR" => "Is onderweg ",
+                        "CNX" => "<span style=\"color: red;\" />Gecancelled</span>",
+                        "FIB" => "<span style=\"color: orange;\" />Bagage verwacht</span>",
+                        "ARR" => "Afgehandeld",
+                        "TOM" => "Komt op andere datum",
+                        "DIV" => "Wijkt uit "
+                );
+                if (isset($flight['publicFlightState']['flightStates'][0])) {
+                        if (array_key_exists($flight['publicFlightState']['flightStates'][0], $statuswaardes))
+                                $status_new = $statuswaardes[$flight['publicFlightState']['flightStates'][0]];
+                        echo "$status_new<br />";
+                } else
+                        echo "Einde van Vluchtinformatie <br /><br /></td>\n";
+
 
 
 	 echo "          <td>";
@@ -438,61 +241,44 @@ else{
                 else
                         echo "Om: $bagagetijd <br /></td>\n";
 
-///
-// 2e aanroep API om extra informatie van vertrek luchthaven op te halen
-///
+			echo "<td>";
 
-echo "<td>";
+	foreach ($flight['route']['destinations'] as $departure)
+	{
 
-    foreach ($flight['route']['destinations'] as $departure)
-    {
+	list($results, $headers) = doCurl("$base_url/public-flights/destinations/$departure?app_id=$app_id&app_key=$app_key");
+        $json2 = json_decode($results, true);
 
-
-$ch2 = curl_init();
-
-curl_setopt($ch2, CURLOPT_URL, "$base_url/public-flights/destinations/$departure?app_id=$app_id&app_key=$app_key");
-
-curl_setopt($ch2, CURLOPT_RETURNTRANSFER, -1);
-curl_setopt($ch2, CURLOPT_CUSTOMREQUEST, "GET");
-
-$headers = array();
-$headers[] = "Accept: application/json";
-$headers[] = "Resourceversion: v1";
-curl_setopt($ch2, CURLOPT_HTTPHEADER, $headers);
-
-$results2 = curl_exec($ch2);
-curl_close($ch2);
-
-if (substr($results2, 0, 3) == "\xEF\xBB\xBF") {
-  $results = substr($results2, 3);
-}
-
-$json2 = json_decode($results2, true);
-
-$city = ($json2{'city'});
-$country = ($json2{'country'});
-$nlcity = ($json2['publicName']{'dutch'});
-
+	$city = ($json2{'city'});
+	$country = ($json2{'country'});
+	$nlcity = ($json2['publicName']{'dutch'});
        
-       echo "$nlcity ($departure)<br />";
-       echo "$country<br />";
+        echo "$nlcity<br />$departure<br />";
+        echo "$country<br />";
 
-//       echo "Vertrokken uit: $country <br />";
-//       echo "City code: $departure <br />";
-
-    }
-echo "</td>";
-
-// indien er geen index 1 is dan volgt er nog een PHP error
-// moet nog wat op verzonnen worden, iets met if empt of zo
+	    }
+	echo "</td>";
 
 
-}
+	}
 
-echo "                        </tbody>";
-echo "                </table>";
+	echo "                        </tbody>";
+	echo "                </table>";
 
-echo "<br />";
+
+	echo "<a href='?p=".($page-1)."&scheduletime=$verwachtetijd&flightnumber=$flightname'>Vorige Pagina</a>";
+        echo "   |   ";
+        echo "<a href='?p=".($page+1)."&scheduletime=$verwachtetijd&flightnumber=$flightname'>Volgende Pagina</a>";
+	echo "<br />";
+	echo "<a href='?p=".($page)."&scheduletime=$verwachtetijd&flightnumber=$flightname'>Ververs Pagina</a>"; 
+        
+
+
+
+// debug inforation
+
+
+echo "<br /><br /><br /><br />";
 echo "<h1>Controle <br>";
 echo "<br />";
 echo "tijd: $verwachtetijd";
@@ -500,6 +286,9 @@ echo "<br />";
 echo "of";
 echo " <br />";
 echo "Vluchtnaam: $flightname</h1>";
+echo "<br  />";
+echo "$url";
+
 
 
 
