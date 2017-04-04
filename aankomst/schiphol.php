@@ -29,7 +29,11 @@
 	 <header>
 <!--                 <h1><a href="./index.php" style="text-decoration: none">Aankomsten</a></h1> -->
 
-   <h1><img src="./css/airplane_arrival.png" width='75' alt='Aankomsten'><a href="./index.php" style="text-decoration: none">Aankomsten</a>  <img src="./css/arrivals_low.png" width='75'></h1>
+   <h1><img src="./css/airplane_arrival.png" width='75' alt='Aankomsten'><a href="./index.php" style="text-decoration: none">Aankomsten</a>  <img src="./css/arrivals_low.png" width='75'></h1> 
+
+
+
+
 
 
 		
@@ -52,9 +56,7 @@ EOT;
 
 
 	$url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightname=$flightname&flightdirection=A&includedelays=true&sort=%2Bscheduletime";
-//  $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightname=$flightname&flightdirection=A&includedelays=true&page=0&sort=%2Bscheduletime";
 		if (!empty($verwachtetijd))
-//        $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$verwachtetijd&flightdirection=A&includedelays=true&page=0&sort=%2Bscheduletime";
         $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$verwachtetijd&flightdirection=A&includedelays=true&page=$page&sort=%2Bscheduletime";
 
 		list($result, $headers) = doCurl($url, 'v3');
