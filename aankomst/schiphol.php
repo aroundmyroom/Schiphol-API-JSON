@@ -1,4 +1,10 @@
 <?php
+error_reporting(E_ERROR + E_WARNING + E_STRICT);
+if ($_SERVER['REMOTE_ADDR'] == '10.1.1.60') {
+		ini_set("display_errors", 1);
+}
+date_default_timezone_set('Europe/Amsterdam');
+
 	if (!isset($_SESSION)){
 	session_start();
 	}
@@ -6,10 +12,8 @@
 	$scheduletime ='';
 	$verwachtetijd = $_GET['scheduletime'];
 	unset($scheduletime);
-	$flightname = $_GET['flightnumber'];
 
-	$datefrom=null;
-	$dateto=null;
+	$flightname = $_GET['flightnumber'];
 
 	header('content-type: text/html; charset: utf-8');
 	echo <<<EOT
@@ -58,6 +62,14 @@ EOT;
 	$url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightname=$flightname&flightdirection=A&includedelays=true&sort=%2Bscheduletime";
 		if (!empty($verwachtetijd))
         $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$verwachtetijd&flightdirection=A&includedelays=true&page=$page&sort=%2Bscheduletime";
+
+/*
+Vluchten voor specifieke dag
+https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&flightdirection=A&includedelays=false&page=0&sort=%2Bscheduletime&fromdate=2017-04-8&todate=2017-04-08
+
+Vluchten voor vandaag met delays
+https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&flightdirection=A&includedelays=true&page=0&sort=%2Bscheduletime&fromdate=2017-04-4&todate=2017-04-04
+*/
 
 		list($result, $headers) = doCurl($url, 'v3');
 		preg_match_all('~<(.*)>; rel="(.*)"~Us', $headers['link'], $matches, PREG_SET_ORDER);
@@ -214,19 +226,20 @@ EOT;
 
 
 
-	$status_old = isset($flight['publicFlightState']['flightStates'][1]) ? $flight['publicFlightState']['flightStates'][1] : "Onbekend";
+	$status_old = isset($flight['publicFlightState']['flightStates'][1]) ? $flight['publicFlightState']['flightStates'][1] : "onbekend";
 
-                $status_new = "onbekend";
+                $status_new = "verwacht";
                 $statuswaardes = array(
-                        "SCH" => "Landing: $status_new <br />Was: $status_old ",
+                        "SCH" => "Wordt $status_new <br />Was: $status_old",
                         "LND" => "Vlucht is geland",
                         "FIR" => "Boven Nederland",
-                        "AIR" => "Is onderweg ",
+                        "AIR" => "Buiten Nederland ",
                         "CNX" => "<span style=\"color: red;\" />Gecancelled</span>",
                         "FIB" => "<span style=\"color: orange;\" />Bagage verwacht</span>",
                         "ARR" => "Afgehandeld",
                         "TOM" => "Komt op andere datum",
-                        "DIV" => "Wijkt uit "
+                        "DIV" => "Wijkt uit",
+			"EXP" => "Gaat landen"
                 );
                 if (isset($flight['publicFlightState']['flightStates'][0])) {
                         if (array_key_exists($flight['publicFlightState']['flightStates'][0], $statuswaardes))

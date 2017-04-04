@@ -5,8 +5,10 @@ date_default_timezone_set('Europe/Amsterdam');
 require_once("./config.php");
 require_once("./functions/functions.php");
 
+
 if (count($_POST)) {
                 $url = "?p=0&scheduletime=".$_POST['scheduletime']."&flightnumber=".$_POST['flightnumber'];
+
                 header("Location: $url");
                 exit;
 }
@@ -58,7 +60,7 @@ if ($_GET['scheduletime'] || $_GET['flightnumber']) {
 
 <script type="text/javascript">
 if (screen.width<=950)
-$("h1").replaceWith('<h1>Arrivals</h1>');
+$("h1").replaceWith('<h1>Schiphol info</h1>');
 
 </script>
 
@@ -98,7 +100,6 @@ echo "</div>";
  </form>
 
     </div>
-
 
 
 <?php
