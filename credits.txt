@@ -1,0 +1,12 @@
+Credits:
+Peter aka ZAPH (Tweakers.net) voor pagination en optimalisaties code (berg van geleerd)
+Radiant, Daos, Krukar (Tweakers.net) om de moeite te nemen te antwoorden op de json vraag ;-)
+
+www.schiphol.nl & schipholapp.nl voor voorbeelden
+ook de officiele app van schiphol diende als voorbeeld welke informatie interessant kan zijn.
+
+en voordat je schreeuwt: je ript de schipholapp: de basis komt van
+https://github.com/nckg/flightboard welke 5 jaar voor het laatst is geupdated
+origineel op google code onder MIT licentie.
+
+... meer wanneer nodig
