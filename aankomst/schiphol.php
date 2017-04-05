@@ -12,8 +12,9 @@ date_default_timezone_set('Europe/Amsterdam');
 	$scheduletime ='';
 	$verwachtetijd = $_GET['scheduletime'];
 	unset($scheduletime);
-
 	$flightname = $_GET['flightnumber'];
+
+        $dfrom = $_GET['dfrom'];
 
 	header('content-type: text/html; charset: utf-8');
 	echo <<<EOT
@@ -299,11 +300,16 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
         }
 
 
-/*
+
+
+
 // debug information [turn on when needed]
 
 
 echo "<br /><br /><br /><br />";
+echo "even dayfrom bekijken: $dfrom";
+
+/*
 echo "<h1>Controle <br>";
 echo "<br />";
 echo "tijd: $verwachtetijd";

@@ -7,12 +7,12 @@ require_once("./functions/functions.php");
 
 
 if (count($_POST)) {
-                $url = "?p=0&scheduletime=".$_POST['scheduletime']."&flightnumber=".$_POST['flightnumber'];
+                $url = "?p=0&scheduletime=".$_POST['scheduletime']."&flightnumber=".$_POST['flightnumber']."&dfrom=".$_POST['dfrom'];
 
                 header("Location: $url");
                 exit;
 }
-if ($_GET['scheduletime'] || $_GET['flightnumber']) {
+if ($_GET['scheduletime'] || $_GET['flightnumber'] || $_GET['dfrom']) {
                 include_once("./aankomst/schiphol.php");
                 exit;
 }
@@ -100,6 +100,29 @@ echo "</div>";
  </form>
 
     </div>
+
+
+
+<div id="data_invoer">
+<p id="invoer1"></p>
+
+<h1>Geef globale Landingstijd in</h1>
+
+<?php
+// 1e form in PHP gezet omdat ik een default tijd gebaseerd op de huidige tijd wilde hebben
+// waarden tussen ""  moeten een escape krijgen wat via \ gedaan wordt
+
+ $formdate = date("H:i");
+
+echo "<br />";
+
+echo "<form name=\"form1\" method=\"post\">";
+echo "<input type=\"text\" name=\"dfrom\" value=\"\" size=\"5\">";
+echo "<input type=\"submit\" name=\"submit\" value=\"submit\">";
+echo " </form>";
+echo "</div>";
+?>
+
 
 
 <?php
