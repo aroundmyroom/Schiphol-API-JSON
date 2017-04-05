@@ -74,8 +74,8 @@
 	 */
     $.ngDateTime.defaultOptions = {
     	seperator: ":",
-    	days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-    	months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    	days: ["Zondag", "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag"],
+    	months: ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"]
     };
 
 	/**

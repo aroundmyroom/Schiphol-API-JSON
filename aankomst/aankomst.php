@@ -18,8 +18,8 @@ date_default_timezone_set('Europe/Amsterdam');
 	$verwachtetijd = $_GET['scheduletime'];
 	unset($scheduletime);
 	$flightname = $_GET['flightnumber'];
-
         $dfrom = $_GET['dfrom'];
+        $delayurl = $_GET['delay'];
 
 	header('content-type: text/html; charset: utf-8');
 	echo <<<EOT
@@ -37,9 +37,9 @@ date_default_timezone_set('Europe/Amsterdam');
 		 <script src="/schiphol/js/upkey.js"></script>
 
 	 <header>
-<!--                 <h1><a href="./index.php" style="text-decoration: none">Aankomsten</a></h1> -->
+<!--                 <h1><a href="../" style="text-decoration: none">Aankomsten</a></h1> -->
 
-   <h1><img src="./css/airplane_arrival.png" width='75' alt='Aankomsten'><a href="./index.php" style="text-decoration: none">Aankomsten</a>  <img src="./css/arrivals_low.png" width='75'></h1> 
+   <h1><img src="../css/airplane_arrival.png" width='75' alt='Aankomsten'><a href="./" style="text-decoration: none">Aankomsten</a>  <img src="../css/arrivals_low.png" width='75'></h1> 
 
 		
 		 </header>
@@ -59,11 +59,11 @@ date_default_timezone_set('Europe/Amsterdam');
 	<pre>
 EOT;
 
-
-	$url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightname=$flightname&flightdirection=A&includedelays=true&sort=%2Bscheduletime";
-		if (!empty($verwachtetijd))
-        $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$verwachtetijd&flightdirection=A&includedelays=true&page=$page&sort=%2Bscheduletime";
-
+	 $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightdirection=A&includedelays=$delayurl&page=$page&sort=%2Bscheduletime&fromdate=$dfrom&todate=$dfrom";
+		if (!empty($flightname))
+	$url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightname=$flightname&flightdirection=A&includedelays=true&fromdate=$dfrom&sort=%2Bscheduletime";
+		 if (!empty($verwachtetijd))
+        $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$verwachtetijd&flightdirection=A&includedelays=true&page=$page&sort=%2Bscheduletime&fromdate=$dfrom";
 /*
 eerst kijken of met één van beide url's de  waarden opgevraagd kan worden. Wellicht dat een van beide URL's gewoon weg kan (lege waarden worden toegestaan bij default door de API
 Vluchten voor specifieke dag
@@ -124,7 +124,7 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
 
 	 if ($datediff2arrival<1) {
 
-	echo "Komt vandaag<br />";
+	echo "Volgens planning<br />";
 	}
 
 	 else {
@@ -288,24 +288,31 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
 
 
 	if (!empty($flightname)) {
-		echo "<a href='?p=".($page)."&scheduletime=$verwachtetijd&flightnumber=$flightname'>Ververs Pagina</a>";
+
+
+	echo "<div id=\"data_invoer\">";
+	echo "<p id=\"invoer1\"></p>";
+	echo "<br /><br />";
+
+		echo "<h1><a href='?p=".($page)."&scheduletime=$verwachtetijd&flightnumber=$flightname'>Ververs Pagina</a></h1>";
 	echo "<br />";
+        echo "</div>";
+
 	}
         
 	else {
 
-	echo "<a href='?p=".($page-1)."&scheduletime=$verwachtetijd&flightnumber=$flightname'>Vorige Pagina</a>";
+	echo "<a href='?p=".($page-1)."&scheduletime=$verwachtetijd&flightnumber=$flightname&dfrom=$dfrom&delay=$delayurl'>Vorige Pagina</a>";
         echo "   |   ";
-        echo "<a href='?p=".($page+1)."&scheduletime=$verwachtetijd&flightnumber=$flightname'>Volgende Pagina</a>";
+        echo "<a href='?p=".($page+1)."&scheduletime=$verwachtetijd&flightnumber=$flightname&dfrom=$dfrom&delay=$delayurl'>Volgende Pagina</a>";
 	echo "<br />";
         }
+
 
 
 // debug information [turn on when needed]
 
 
-echo "<br /><br /><br /><br />";
-echo "even dayfrom bekijken: $dfrom";
 
 /*
 echo "<h1>Controle <br>";

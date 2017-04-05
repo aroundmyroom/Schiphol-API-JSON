@@ -19,7 +19,7 @@ nav ul { list-style:none; }
 blockquote, q { quotes:none; }
 blockquote:before, blockquote:after, q:before, q:after { content:''; content:none; }
 a { margin:0; padding:0; font-size:100%; vertical-align:baseline; background:transparent; }
-ins { background-color:#ff9; color:#000; text-decoration:none; }
+ins { background-color:#ff9; color:#000; text-decoration: none; }
 mark { background-color:#ff9; color:#000; font-style:italic; font-weight:bold; }
 del { text-decoration: line-through; }
 abbr[title], dfn[title] { border-bottom:1px dotted #000; cursor:help; }
@@ -56,7 +56,7 @@ h1,h2,h3,h4,h5,h6 { font-weight: bold; text-rendering: optimizeLegibility; }
 html { -webkit-font-smoothing: antialiased; }
 a:hover, a:active { outline: none; }
 a, a:active, a:visited { color:#607890; }
-a:hover { color:#036; }
+a:hover { color:#036; text-decorations: none; }
 ul { margin-left:30px; }
 ol { margin-left:30px; list-style-type: decimal; }
 small { font-size:85%; }
@@ -75,7 +75,7 @@ label, input[type=button], input[type=submit], button { cursor: pointer; }
 ::-moz-selection{ background: #FF5E99; color:#fff; text-shadow: none; }
 ::selection { background:#FF5E99; color:#fff; text-shadow: none; }
 
-a:link { -webkit-tap-highlight-color: #FF5E99; }
+a:link { -webkit-tap-highlight-color: #FF5E99; text-decoration: none; }
 
 
 html { overflow-y: scroll; }
@@ -170,7 +170,8 @@ table tbody td {
 	font-family: 'Conv_frutiger';
 	background: #fff;
 	text-shadow: none;
-
+        font-size: 75%;
+	width: 20%;
 }
 
 table tbody tr.odd td {
@@ -216,7 +217,7 @@ table tbody td.hall, td.belt {
  */
 @media print {
   * { width: 20px; margin-left: auto; margin-right: auto; margin-top: auto; text-align: center; padding: 7px; background: transparent !important; color: #444 !important; text-shadow: none; }
-  a, a:visited { color: #444 !important; text-decoration: underline; }
+  a, a:visited { color: #444 !important; text-decoration: none; }
   a:after { content: " (" attr(href) ")"; }
   abbr:after { content: " (" attr(title) ")"; }
   .ir a:after { content: ""; }  /* Don't show links for images */

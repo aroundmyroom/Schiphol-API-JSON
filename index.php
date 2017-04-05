@@ -7,13 +7,13 @@ require_once("./functions/functions.php");
 
 
 if (count($_POST)) {
-                $url = "?p=0&scheduletime=".$_POST['scheduletime']."&flightnumber=".$_POST['flightnumber']."&dfrom=".$_POST['dfrom'];
+                $url = "?p=0&scheduletime=".$_POST['scheduletime']."&flightnumber=".$_POST['flightnumber']."&dfrom=".$_POST['dfrom']."&delay=".$_POST['$delay'];
 
                 header("Location: $url");
                 exit;
 }
 if ($_GET['scheduletime'] || $_GET['flightnumber'] || $_GET['dfrom']) {
-                include_once("./aankomst/schiphol.php");
+                include_once("./aankomst/aankomst.php");
                 exit;
 }
 
@@ -23,7 +23,16 @@ if ($_GET['scheduletime'] || $_GET['flightnumber'] || $_GET['dfrom']) {
 <html>
 <head>
 
-  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+<link rel="apple-touch-icon" sizes="180x180" href="css/ico/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="css/ico/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="css/ico/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="css/ico/manifest.json">
+<link rel="mask-icon" href="css/ico/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+
   <link rel="stylesheet" href="/schiphol/css/style.css" />
   <script type="text/javascript" src="/schiphol/js/modernizr-1.5.min.js"></script>
 </head>
@@ -70,59 +79,11 @@ $("h1").replaceWith('<h1>Schiphol info</h1>');
 <div id="data_invoer">
 <p id="invoer1"></p>
 
-<h1>Geef globale Landingstijd in</h1>
-
-<?php
-// 1e form in PHP gezet omdat ik een default tijd gebaseerd op de huidige tijd wilde hebben
-// waarden tussen ""  moeten een escape krijgen wat via \ gedaan wordt
-
- $formdate = date("H:i");
-
-echo "<br />";
-
-echo "<form name=\"form1\" method=\"post\">";
-echo "<input type=\"time\" name=\"scheduletime\" value=\"$formdate\" size=\"5\">";
-echo "<input type=\"submit\" name=\"submit\" value=\"submit\">";
-echo " </form>";
-echo "</div>";
-?>
-
-<br /><br />
-<div id="data_invoer">
-<p id="invoer1"></p>
-
-<h1>of</h1>
-<h1>Geef vluchtnummer in</h1>
+<h1><a href="./aankomst/">Aankomsten</a>
 <br />
-<form name="form1" method="post">
-<input type="text" name="flightnumber" value="" size="7" onkeydown="upperCaseF(this)">
-<input type="submit" name="submit" value="submit">
- </form>
-
-    </div>
-
-
-<div id="data_invoer">
-<p id="invoer1"></p>
-
-<h1>Geef datum in (nb, dit worden fixed data: gisteren, vandaag en morgen met een button cq. image link</h1>
-
-<?php
-
- $formdate = date("H:i");
-
-	echo "<br />";
-
-	echo "<form name=\"form1\" method=\"post\">";
-	echo "<input type=\"text\" name=\"dfrom\" value=\"\" size=\"5\">";
-	echo "<input type=\"submit\" name=\"submit\" value=\"submit\">";
-	echo " </form>";
-	echo "</div>";
-?>
-
-<?php
-unset($scheduletime);
-?>
+<br />
+<br />
+<a href="./vertrek/">Vertrekkende vliegtuigen (werkt nog niet)</a><h1>
 
 
 </body>
