@@ -1,4 +1,9 @@
 <?php
+// LET OP: File moet nog hernoemd worden naar aankomst.php omdat straks met vertrek.php gewerkt kan worden. schiphol.php is dan obsolete
+// 
+// denk aan de aanpassing in index.php met de include !
+
+
 error_reporting(E_ERROR + E_WARNING + E_STRICT);
 if ($_SERVER['REMOTE_ADDR'] == '10.1.1.60') {
 		ini_set("display_errors", 1);
@@ -36,11 +41,6 @@ date_default_timezone_set('Europe/Amsterdam');
 
    <h1><img src="./css/airplane_arrival.png" width='75' alt='Aankomsten'><a href="./index.php" style="text-decoration: none">Aankomsten</a>  <img src="./css/arrivals_low.png" width='75'></h1> 
 
-
-
-
-
-
 		
 		 </header>
 
@@ -65,6 +65,7 @@ EOT;
         $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$verwachtetijd&flightdirection=A&includedelays=true&page=$page&sort=%2Bscheduletime";
 
 /*
+eerst kijken of met één van beide url's de  waarden opgevraagd kan worden. Wellicht dat een van beide URL's gewoon weg kan (lege waarden worden toegestaan bij default door de API
 Vluchten voor specifieke dag
 https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&flightdirection=A&includedelays=false&page=0&sort=%2Bscheduletime&fromdate=2017-04-8&todate=2017-04-08
 
@@ -298,9 +299,6 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
         echo "<a href='?p=".($page+1)."&scheduletime=$verwachtetijd&flightnumber=$flightname'>Volgende Pagina</a>";
 	echo "<br />";
         }
-
-
-
 
 
 // debug information [turn on when needed]

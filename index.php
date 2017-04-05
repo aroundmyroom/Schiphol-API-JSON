@@ -102,28 +102,23 @@ echo "</div>";
     </div>
 
 
-
 <div id="data_invoer">
 <p id="invoer1"></p>
 
-<h1>Geef globale Landingstijd in</h1>
+<h1>Geef datum in (nb, dit worden fixed data: gisteren, vandaag en morgen met een button cq. image link</h1>
 
 <?php
-// 1e form in PHP gezet omdat ik een default tijd gebaseerd op de huidige tijd wilde hebben
-// waarden tussen ""  moeten een escape krijgen wat via \ gedaan wordt
 
  $formdate = date("H:i");
 
-echo "<br />";
+	echo "<br />";
 
-echo "<form name=\"form1\" method=\"post\">";
-echo "<input type=\"text\" name=\"dfrom\" value=\"\" size=\"5\">";
-echo "<input type=\"submit\" name=\"submit\" value=\"submit\">";
-echo " </form>";
-echo "</div>";
+	echo "<form name=\"form1\" method=\"post\">";
+	echo "<input type=\"text\" name=\"dfrom\" value=\"\" size=\"5\">";
+	echo "<input type=\"submit\" name=\"submit\" value=\"submit\">";
+	echo " </form>";
+	echo "</div>";
 ?>
-
-
 
 <?php
 unset($scheduletime);
