@@ -10,10 +10,6 @@ if ($_SERVER['REMOTE_ADDR'] == '10.1.1.60') {
 }
 date_default_timezone_set('Europe/Amsterdam');
 
-	if (!isset($_SESSION)){
-	session_start();
-	}
-
 	$scheduletime ='';
 	$verwachtetijd = $_GET['scheduletime'];
 	unset($scheduletime);
@@ -27,6 +23,7 @@ date_default_timezone_set('Europe/Amsterdam');
 	<head>
 
 		<meta http-equiv="content-type" content="text/html; charset=utf-8">
+		<meta http-equiv="refresh" content="120" />
 		<link rel="stylesheet" href="/schiphol/css/style.css" />
 		<script type="text/javascript" src="/schiphol/js/modernizr-1.5.min.js"></script>
 	</head>
@@ -35,6 +32,9 @@ date_default_timezone_set('Europe/Amsterdam');
 		 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 		 <script src="/schiphol/js/jquery.ngclock.0.1.js"></script>
 		 <script src="/schiphol/js/upkey.js"></script>
+
+
+	</script>
 
 	 <header>
 <!--                 <h1><a href="../" style="text-decoration: none">Aankomsten</a></h1> -->
@@ -159,10 +159,14 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
 	$vliegtuig = $vliegtuigen[0]['longDescription'];
 	$vliegtuigtype = $vliegtuigen[0]['shortDescription'];
 
-	echo "$vliegtuig <br /></td>";
+        echo "<a href='https://www.google.nl/search?q=$vliegtuig&source=lnms&tbm=isch' target='_blank' title='toon vliegtuigfotos in nieuwe pagina'>$vliegtuig</a> <br />"; 
+//	echo "$vliegtuig <br /></td>";
 		
 
-	echo "<td><span style=\"color: blue;\">Code: {$flight['flightName']}</span>";
+//	echo "<td><span style=\"color: blue;\">Code: {$flight['flightName']}</span>";
+	$vluchtnummer = $flight['flightName'];
+	echo "<td><a href='?p=".($page)."&scheduletime=&flightnumber=$vluchtnummer' title='Klik op de vluchtcode om deze vlucht in de gaten te houden'>Code: {$flight['flightName']}</a>";
+        
 
 	if (isset($flight['codeshares']['codeshares']))
         	foreach ($flight['codeshares']['codeshares'] as $joinedwith)
@@ -189,7 +193,10 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
                 echo "$typevlucht<br />";
 
 
-		echo "Registratie: {$flight['aircraftRegistration']}<br />";
+
+                $registratiecode = $flight['aircraftRegistration'];
+                echo "Registratie: <a href='https://hiveminer.com/Tags/$registratiecode' target='_blank'>$registratiecode</a><br />";
+//              echo "Registratie: {$flight['aircraftRegistration']}<br />";
 		echo "Code: {$flight['airlineCode']}<br /></td>";
 		echo "<td>$etadateswitch - $eta <br />";
 
@@ -211,7 +218,7 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
 
 	$actuallandingtime = substr($flight['actualLandingTime'], strpos($flight['actualLandingTime'], "T") +1,8);
 	if (empty($actuallandingtime)) {
-     		echo "Vliegt op route <br /></td>";
+     		echo "Geen landingstijd bekend<br /></td>";
 	}
 
 	else {

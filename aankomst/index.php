@@ -41,7 +41,7 @@ if ($_GET['scheduletime'] || $_GET['flightnumber'] || $_GET['dfrom']) {
  <script src="/schiphol/js/upkey.js"></script>
 <div id="container">
     <header>
-                <h1>Schiphol Info: Aankomsten</h1>
+                <h1><a href="../">Schiphol Info: </a>Aankomsten</h1>
     </header>
 
             <div id="date_time">
