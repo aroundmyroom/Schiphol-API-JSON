@@ -81,7 +81,6 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
 		        foreach ($json['flights'] as $flight)
 	        {
 
-
 	$eta  = substr($flight['estimatedLandingTime'], strpos($flight['estimatedLandingTime'], "T") +1,8);
 	$etadate = substr($flight['estimatedLandingTime'],0,10);
 	$etadateswitch = date('d-m-Y', strtotime($etadate));
@@ -195,7 +194,7 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
 		echo "<td>$etadateswitch - $eta <br />";
 
 	if ($datediff2arrival>0):
-		echo "<span style=\"color: red;\">Grote vertraging</span><br />"; /* $vertraging) <br />"; */
+		echo "<span style=\"color: red;\">Grote vertraging:</span><br />"; /* $vertraging) <br />"; */
 	
 	elseif ($eta1 > $eta2):
 
@@ -324,6 +323,36 @@ echo " <br />";
 echo "Vluchtnaam: $flightname</h1>";
 echo "<br  />";
 echo "$url";
+
+*/
+
+//$eta2a = ($flight['scheduleTime']);
+//echo "$eta2a";
+//echo "<br />";
+//echo "eta: $eta";
+echo "<br />";
+echo "testdatum 0 $testdatum0";
+echo "testdatum 4 $testdatum4";
+
+// indien kleiner dan 0
+
+echo "debuggen eerder aankomen over de dag terug en over de dag heen (laatste is vetraging)";
+echo "<br />";
+$negatief = strtotime($testdatum4) - strtotime($testdatum0);
+echo "uitrekenen van negatief $negatief";
+echo "<br />";
+if ($negatief <0) {
+	echo "De vlucht komt eerder aan";
+	}
+	else
+	echo "de vlucht komt later of is op tijd";
+
+
+/*
+ $vluchtdatum = date('d-m-Y', strtotime($flight['scheduleDate']));
+ $testdatum0 = ($flight['scheduleDate']);
+ $testdatum4 = $etadate ;
+ $datediffarrival = abs(strtotime($testdatum4) - strtotime($testdatum0));
 
 */
 
