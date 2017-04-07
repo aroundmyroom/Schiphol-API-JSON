@@ -257,7 +257,7 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
 
                 $status_new = "verwacht";
                 $statuswaardes = array(
-                        "SCH" => "Wordt $status_new <br />Was: $status_old",
+                        "SCH" => "Gaat vertrekken $status_new <br />Was: $status_old",
                         "LND" => "Vlucht is geland",
                         "FIR" => "Boven Nederland",
                         "AIR" => "Buiten Nederland ",
@@ -287,24 +287,38 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
 
 	 echo "          <td>";
 
+
+
+	$len = count($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']);
 	if (isset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
-		foreach($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk) {
-
-	if ($desk === reset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
-		echo "Balie rij: {$desk['position']}<br />";
-
-        if ($desk === end ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
-        echo " - {$desk['position']}<br />";
-
+	foreach ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk => $position) {
+    	if ($desk == 0) {
+	echo "Balie rij: {$position['position']}";
+        // first
+	    } else if ($desk == $len - 1) {
+        // last
+	echo " - {$position['position']}";
+    }
 }
 
-		 foreach($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'][0]['desks']['desks'] as $checkinclass) {
+
+
+//		foreach($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk) {
+//	if ($desk === reset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
+//		echo "Balie rij: {$desk['position']}";
+//
+//        if ($desk === end ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
+//        echo " - {$desk['position']}<br />";
+
+//}
+
+//		 foreach($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'][0]['desks']['desks'] as $checkinclass) {
 //	if ($checkinclass === reset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'][0]['desks']['desks']))
-                 echo "Check-in Class: {$checkinclass['checkinClass']['code']}<br />";
+//                 echo "Check-in Class: {$checkinclass['checkinClass']['code']}<br />";
 
 //         if ($checkinclass === end($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'][0]['desks']['desks']))
 //	 	echo " {$checkinclass['checkinClass']['code']}<br />";
-}
+//}
 
 
 echo "<td>";
@@ -419,8 +433,8 @@ var_dump ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']
 
 echo "debug <br />";
 
-echo "foreach<br />";
-foreach($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'][0]['desks'] as $desk) {
+//echo "foreach<br />";
+//foreach($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'][0]['desks'] as $desk) {
 
 // foreach($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']
 //['position']['desks'][0]['desks'['checkinClass'] as $klasse) {
@@ -433,7 +447,7 @@ foreach($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'][0
 
     // to know what's in $item
     echo '<pre>'; var_dump($desk['desks']['checkinClass']);
-}
+//}
 
 
 
