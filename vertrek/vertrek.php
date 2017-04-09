@@ -39,7 +39,7 @@ date_default_timezone_set('Europe/Amsterdam');
 	 <header>
 <!--                 <h1><a href="../" style="text-decoration: none">Vertrekken</a></h1> -->
 
-   <h1><img src="../css/airplane_arrival.png" width='75' alt='Vertrekken'><a href="./" style="text-decoration: none">Vertrekken</a>  <img src="../css/arrivals_low.png" width='75'></h1> 
+   <h1><img src="../css/airplane_departure.png" width='75' alt='Vertrekken'><a href="./" style="text-decoration: none">Vertrekken</a>  <img src="../css/departures.png" width='75'></h1> 
 
 		
 		 </header>
@@ -289,17 +289,25 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
 
 
 
-	$len = count($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']);
-	if (isset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
-	foreach ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk => $position) {
-    	if ($desk == 0) {
-	echo "Balie rij: {$position['position']}";
+//	$len = count($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']);
+//	if (isset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
+//	foreach ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk => $position) {
+//    	if ($desk == 0) {
+//	echo "Balie rij: {$position['position']}";
+//	echo "desks:  {$position['position']}, {$position['desks']['desks']['0']['checkinClass']['description']}<br /> ";
         // first
-	    } else if ($desk == $len - 1) {
+//	    } else if ($desk == $len - 1) {
         // last
-	echo " - {$position['position']}";
-    }
-}
+//	echo " - {$position['position']}";
+//    }
+//}
+
+  if (isset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
+        foreach ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk => $position) {
+        echo "  {$position['position']} - {$position['desks']['desks']['0']['checkinClass']['description']}<br /> ";
+
+        }
+
 
 
 
@@ -426,49 +434,126 @@ if ($negatief <0) {
 echo "<br />";
 echo "<br />";
 
-//var_dump ($flight['checkinAllocations']['checkinAllocations'][0]['startTime']);
+$drop1 = ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']);
 
-var_dump ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'][0]['position']);
-var_dump ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'][0]['desks']['desks'][0]['checkinClass']);
+echo "<pre>";
+//print_r ($drop1);
+echo "dit was de drop1 <br />";
+echo "</pre>";
 
-echo "debug <br />";
+$key1 = $drop1['0']['desks']['desks']['0']['checkinClass']['description'];
+$key2 = $drop1['0']['desks']['desks']['0']['position'];
+$key3 = $drop1['position'];
 
-//echo "foreach<br />";
-//foreach($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'][0]['desks'] as $desk) {
+echo "<br /> een test<br />";
 
-// foreach($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']
-//['position']['desks'][0]['desks'['checkinClass'] as $klasse) {
-                echo "klasse: {$desk['desks']['checkinClass']}<br />";
+	//$len = count($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']); // drop1
+        if (isset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
+ 	foreach ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk => $position) {
+	echo "desks:  {$position['position']}, {$position['desks']['desks']['0']['checkinClass']['description']}<br /> ";
 
+	}
+	// else if ($desk == $len - 1) {
+        // last
+	//echo " waar komt dit?";
+        //echo " - {$position['position']}"; 
+//    }
 
-
-    
-//echo "$desk['position']";
-
-    // to know what's in $item
-    echo '<pre>'; var_dump($desk['desks']['checkinClass']);
-//}
-
-
-
-
-//http://www.hashbangcode.com/blog/finding-first-and-last-items-array-php
-
-$test1 =  $flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'];
-print  $flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'][0];
-
-echo "<br />";
-echo "starttijd: {$flight['checkinAllocations']['checkinAllocations'][0]['startTime']}";
-echo "<br />";
-echo "desks:  {$flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']['position']['desks']['desks']['position']}";
+echo " <br />Dit niet meenmenen als array <br />";
+//var_dump($newarray);
 
 
-/*
- $vluchtdatum = date('d-m-Y', strtotime($flight['scheduleDate']));
- $testdatum0 = ($flight['scheduleDate']);
- $testdatum4 = $etadate ;
- $datediffarrival = abs(strtotime($testdatum4) - strtotime($testdatum0));
+//echo "key1: $key1";
+//echo "<br />key2: $key2";
+//echo "<br />key3: $key3";
 
-*/
+
+
+    $len = count($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']);
+        if (isset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
+        foreach ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk => $position) {
+        if ($desk == 0) {
+        echo "Balie rij: {$position['position']}";
+        // first
+            } else if ($desk == $len - 1) {
+        // last
+        echo " - {$position['position']}";
+    }
+}
+
+echo "wat gaat hieronder gebeuren !!!!!!!!!!!!!!!!!! <br />";
+
+ echo "<br />Checkin: ";
+ if (isset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
+        foreach ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk => $position) {
+	$output = [$position['position']];
+	$output2 = [$position['desks']['desks']['0']['checkinClass']['description']];
+
+	$news = array_combine($output2, $output);
+        echo "{$news['Check-in']} {$news['check-in']} {$news['economy']} {$news['FLYBE']} {$news['AerClub']}";
+}
+
+echo "<br />Baggage drop-off:";
+
+if (isset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
+        foreach ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk => $position) {
+        $output = [$position['position']];
+        $output2 = [$position['desks']['desks']['0']['checkinClass']['description']];
+
+        $news = array_combine($output2, $output);
+        echo "{$news['Baggage drop-off']} {$news['Bag Drop Only']} ";
+}
+
+echo "<br />Self-Service: ";
+if (isset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
+        foreach ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk => $position) {
+        $output = [$position['position']];
+        $output2 = [$position['desks']['desks']['0']['checkinClass']['description']];
+
+        $news = array_combine($output2, $output);
+        echo "{$news['SSDOP']} ";
+}
+
+echo "<br />Bag Drop:";
+if (isset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
+        foreach ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk => $position) {
+        $output = [$position['position']];
+        $output2 = [$position['desks']['desks']['0']['checkinClass']['description']];
+
+        $news = array_combine($output2, $output);
+        echo "{$news['Bagdrop']} ";
+}
+
+echo "<br />Incheck Hulp:";
+if (isset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
+        foreach ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk => $position) {
+        $output = [$position['position']];
+        $output2 = [$position['desks']['desks']['0']['checkinClass']['description']];
+
+        $news = array_combine($output2, $output);
+        echo "{$news['Checkin Assistance']} ";
+}
+
+echo "<br />Vlucht controle:";
+if (isset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
+        foreach ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk => $position) {
+        $output = [$position['position']];
+        $output2 = [$position['desks']['desks']['0']['checkinClass']['description']];
+
+        $news = array_combine($output2, $output);
+        echo "{$news['Flight Control']} ";
+}
+
+
+echo "<br />Business / Priority: ";
+if (isset($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows']))
+        foreach ($flight['checkinAllocations']['checkinAllocations'][0]['rows']['rows'] as $desk => $position) {
+        $output = [$position['position']];
+        $output2 = [$position['desks']['desks']['0']['checkinClass']['description']];
+
+        $news = array_combine($output2, $output);
+        echo "{$news['Business/Priority']} {$news['First/Business']} {$news['Priority']}";
+}
+
 
 ?>
