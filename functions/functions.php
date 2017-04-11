@@ -39,4 +39,9 @@ $ch = curl_init();
 }
 
 
+function ContainsNumbers($String){
+    return preg_match('/\\d/', $String) > 0;
+}
+
+
 ?>
