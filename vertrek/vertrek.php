@@ -221,38 +221,45 @@ echo "<br />";
 		echo "Code: {$flight['airlineCode']}<br /></td>";
 
 //Vertrektijd
-
-		 echo "<td>$etadateswitch - $eta <br />";
-		 echo "Nieuwe vertrektijd: {$flight['publicEstimatedOffBlockTime']}";
+// Informatie niet tonen als waarden leeg zijn (nog doen).
+ 
+    	        $offblocktime= substr($flight['publicEstimatedOffBlockTime'], strpos($flight['publicEstimatedOffBlockTime'], "T") +1,5);
+		$actualblocktime = substr($flight['actualOffBlockTime'], strpos($flight['actualOffBlockTime'], "T") +1,5); 
+                echo "<td>";
+ 		echo "Nieuwe vertrektijd: $offblocktime <br />"; 
+// 		echo "<td>$etadateswitch - $eta <br />";
+//      	echo "Nieuwe vertrektijd: {$flight['publicEstimatedOffBlockTime']}";
+//		echo "<br />";
+		echo "geen tijd als vlucht nog niet vertrokken is";
+		echo "Vlucht vertrokken: $actualblocktime";
+//		 echo "Vlucht vertrokken om: {$flight['actualOffBlockTime']}";
 		 echo "<br />";
-		 echo "Vlucht vertrokken om: {$flight['actualOffBlockTime']}";
-		 echo "<br />";
 
-	if ($datediff2arrival>0):
-		echo "<span style=\"color: red;\">Grote vertraging:</span><br />"; /* $vertraging) <br />"; */
+//	if ($datediff2arrival>0):
+//		echo "<span style=\"color: red;\">Grote vertraging:</span><br />"; /* $vertraging) <br />"; */
 	
-	elseif ($eta1 > $eta2):
+//	elseif ($eta1 > $eta2):
 
-		echo "<span style=\"color: red;\">Vertraging: $vertraging</span><br />";
+//		echo "<span style=\"color: red;\">Vertraging: $vertraging</span><br />";
 	
-	 elseif ($eta1 == $eta2):
-		echo "<span style=\"color: blue;\">Op tijd</span> <br />";
+//	 elseif ($eta1 == $eta2):
+//		echo "<span style=\"color: blue;\">Op tijd</span> <br />";
 
-	  else:
-		 echo "<span style=\"color: green;\">Landt eerder: $vertraging</span> <br />";
+//	  else:
+//		 echo "<span style=\"color: green;\">Landt eerder: $vertraging</span> <br />";
 	
-	endif;
+//	endif;
 
 
-	$actuallandingtime = substr($flight['actualLandingTime'], strpos($flight['actualLandingTime'], "T") +1,8);
-	if (empty($actuallandingtime)) {
-     		echo "Geen landingstijd bekend<br /></td>";
-	}
-
-	else {
-		echo "<span style=\"color: green;\">Geland om: $actuallandingtime</span> <br /></td>";
-	}
-
+//	$actuallandingtime = substr($flight['actualLandingTime'], strpos($flight['actualLandingTime'], "T") +1,8);
+//	if (empty($actuallandingtime)) {
+//     		echo "Geen landingstijd bekend<br /></td>";
+//	}
+//
+//	else {
+//		echo "<span style=\"color: green;\">Geland om: $actuallandingtime</span> <br /></td>";
+//	}
+echo "</td>";
 	echo "<td>Gate: {$flight['gate']} <br />";
 
 	$terminal = "Vertrekhal: onbekend";
@@ -323,13 +330,15 @@ echo "<br />";
 
 	 echo "          <td>";
 
-	$checktimestart = ($flight['checkinAllocations']['checkinAllocations'][0]['startTime']);
-	$checktimeend =   ($flight['checkinAllocations']['checkinAllocations'][0]['endTime']);
+	$checktimestart = substr($flight['checkinAllocations']['checkinAllocations'][0]['startTime'], strpos($flight['checkinAllocations']['checkinAllocations'][0]['startTime'], "T") +1,5);
+	$checktimeend =   substr($flight['checkinAllocations']['checkinAllocations'][0]['endTime'], strpos($flight['checkinAllocations']['checkinAllocations'][0]['endTime'], "T") +1,5);
+
+	$offblocktime= substr($flight['publicEstimatedOffBlockTime'], strpos($flight['publicEstimatedOffBlockTime'], "T") +1,5);
 
 	echo "Begintijd: $checktimestart ";
 	echo "<br />";
 	echo "Eindtijd: $checktimeend";
-	echo "<br />";
+//	echo "<br />";
 
 
 	ob_start();
