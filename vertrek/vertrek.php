@@ -197,7 +197,7 @@ session_start();
 		$cancelled = $flight['publicFlightState']['flightStates'][0];
 
 		if ($cancelled <> "CNX") {
-                echo "Volgens planning: $plandeparttime";
+                echo "Laatste planning: $plandeparttime";
 		}
 		else 
 		echo "<s>Volgens planning: $plandeparttime</s>";
