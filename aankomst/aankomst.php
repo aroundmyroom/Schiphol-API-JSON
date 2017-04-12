@@ -1,7 +1,4 @@
 <?php
-// LET OP: File moet nog hernoemd worden naar aankomst.php omdat straks met vertrek.php gewerkt kan worden. schiphol.php is dan obsolete
-// 
-// denk aan de aanpassing in index.php met de include !
 
 
 error_reporting(E_ERROR + E_WARNING + E_STRICT);
@@ -64,14 +61,6 @@ EOT;
 	$url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightname=$flightname&flightdirection=A&includedelays=true&fromdate=$dfrom&sort=%2Bscheduletime";
 		 if (!empty($verwachtetijd))
         $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$verwachtetijd&flightdirection=A&includedelays=true&page=$page&sort=%2Bscheduletime&fromdate=$dfrom";
-/*
-eerst kijken of met één van beide url's de  waarden opgevraagd kan worden. Wellicht dat een van beide URL's gewoon weg kan (lege waarden worden toegestaan bij default door de API
-Vluchten voor specifieke dag
-https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&flightdirection=A&includedelays=false&page=0&sort=%2Bscheduletime&fromdate=2017-04-8&todate=2017-04-08
-
-Vluchten voor vandaag met delays
-https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&flightdirection=A&includedelays=true&page=0&sort=%2Bscheduletime&fromdate=2017-04-4&todate=2017-04-04
-*/
 
 		list($result, $headers) = doCurl($url, 'v3');
 		preg_match_all('~<(.*)>; rel="(.*)"~Us', $headers['link'], $matches, PREG_SET_ORDER);
@@ -166,12 +155,13 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
 //	echo "<td><span style=\"color: blue;\">Code: {$flight['flightName']}</span>";
 	$vluchtnummer = $flight['flightName'];
 	echo "<td><a href='?p=".($page)."&scheduletime=&flightnumber=$vluchtnummer' title='Klik op de vluchtcode om deze vlucht in de gaten te houden'>Code: {$flight['flightName']}</a>";
-        
+        echo "<br />";
+        echo "Main: {$flight['mainFlight']}";
 
 	if (isset($flight['codeshares']['codeshares']))
         	foreach ($flight['codeshares']['codeshares'] as $joinedwith)
 		{
-                       	echo "<span style=\"color: grey;\"><br />Code: {$joinedwith}</span>";
+                       	echo "<span style=\"color: grey;\"><br />Shared: {$joinedwith}</span>";
                 }
 
                 $typevlucht = $flight['serviceType'];
@@ -316,51 +306,5 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
 
 
 
-// debug information [turn on when needed]
-
-
-
-/*
-echo "<h1>Controle <br>";
-echo "<br />";
-echo "tijd: $verwachtetijd";
-echo "<br />";
-echo "of";
-echo " <br />";
-echo "Vluchtnaam: $flightname</h1>";
-echo "<br  />";
-echo "$url";
-
-*/
-
-//$eta2a = ($flight['scheduleTime']);
-//echo "$eta2a";
-//echo "<br />";
-//echo "eta: $eta";
-echo "<br />";
-echo "testdatum 0 $testdatum0";
-echo "testdatum 4 $testdatum4";
-
-// indien kleiner dan 0
-
-echo "debuggen eerder aankomen over de dag terug en over de dag heen (laatste is vetraging)";
-echo "<br />";
-$negatief = strtotime($testdatum4) - strtotime($testdatum0);
-echo "uitrekenen van negatief $negatief";
-echo "<br />";
-if ($negatief <0) {
-	echo "De vlucht komt eerder aan";
-	}
-	else
-	echo "de vlucht komt later of is op tijd";
-
-
-/*
- $vluchtdatum = date('d-m-Y', strtotime($flight['scheduleDate']));
- $testdatum0 = ($flight['scheduleDate']);
- $testdatum4 = $etadate ;
- $datediffarrival = abs(strtotime($testdatum4) - strtotime($testdatum0));
-
-*/
 
 ?>

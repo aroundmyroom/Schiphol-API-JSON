@@ -1,7 +1,4 @@
 <?php
-// LET OP: File moet nog hernoemd worden naar aankomst.php omdat straks met vertrek.php gewerkt kan worden. schiphol.php is dan obsolete
-// 
-// denk aan de aanpassing in index.php met de include !
 
 
 error_reporting(E_ERROR + E_WARNING + E_STRICT);
@@ -65,14 +62,7 @@ session_start();
 	$url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightname=$flightname&flightdirection=D&includedelays=true&fromdate=$dfrom&sort=%2Bscheduletime";
 		 if (!empty($verwachtetijd))
         $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$verwachtetijd&flightdirection=D&includedelays=true&page=$page&sort=%2Bscheduletime&fromdate=$dfrom";
-/*
-eerst kijken of met één van beide url's de  waarden opgevraagd kan worden. Wellicht dat een van beide URL's gewoon weg kan (lege waarden worden toegestaan bij default door de API
-Vluchten voor specifieke dag
-https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&flightdirection=A&includedelays=false&page=0&sort=%2Bscheduletime&fromdate=2017-04-8&todate=2017-04-08
 
-Vluchten voor vandaag met delays
-https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&flightdirection=A&includedelays=true&page=0&sort=%2Bscheduletime&fromdate=2017-04-4&todate=2017-04-04
-*/
 
 		list($result, $headers) = doCurl($url, 'v3');
 		preg_match_all('~<(.*)>; rel="(.*)"~Us', $headers['link'], $matches, PREG_SET_ORDER);
@@ -82,55 +72,31 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
 		        foreach ($json['flights'] as $flight)
 	        {
 
-	$eta  = substr($flight['estimatedLandingTime'], strpos($flight['estimatedLandingTime'], "T") +1,8);
-	$etadate = substr($flight['estimatedLandingTime'],0,10);
-	$etadateswitch = date('d-m-Y', strtotime($etadate));
-
-	$eta1 = strtotime($eta);
-	$eta2 = strtotime($flight['scheduleTime']);
-	$eta3 = abs($eta1-$eta2);
-	$vertraging = gmdate("H:i:s", $eta3);
-	$vluchtdatum = date('d-m-Y', strtotime($flight['scheduleDate']));
-
-	$testdatum0 = ($flight['scheduleDate']);
-
-	$testdatum4 = $etadate ;
-
-
-	$datediffarrival = abs(strtotime($testdatum4) - strtotime($testdatum0));
-
-        // delen door 0 geeft foutmelding
-	if ($datediffarrival <> 0) {
-	$datediff2arrival = (24/($datediffarrival/3600));
-	}
-	else 
-	$datediff2arrival = 0;
-
-
 	echo "<table id=\"departures\">";
 	echo "		<thead>";
 	echo "		<tr>";
 	echo "		<th>Planning</th>";
 	echo "		<th>Vluchtinfo</th>";
 	echo "		<th>Vertrektijd</th>";
-	echo "		<th>Vertrek</th>";
+	echo "		<th>Vertrek locatie</th>";
 	echo "		<th>Check-in<br>balies</th>";
 	echo "		<th>Bestemming</th>";
 	echo "		</tr>";
 	echo "		</thead>";
 
 	echo "<tbody>";
+	$vluchtdatum = date('d-m-Y', strtotime($flight['scheduleDate']));
+     	$date = date("d.m.Y");
+	$match_date = date('d.m.Y', strtotime($vluchtdatum));
+
 	echo "<td>$vluchtdatum<br />";
 
-	 if ($datediff2arrival<1) {
-
-	echo "Ingeroosterd<br />";
-	}
-
-	 else {
-
-	echo "<span style=\"color: red;\">Wijziging:  $etadateswitch</span><br />"; /* +$datediff2arrival dag</span><br />"; */
-	}
+	 if($date == $match_date) {
+        echo "Vandaag <br />";
+        }
+        else {
+        echo "Let op: datum <br />";
+        }
 
 
 	$plandeparttime = substr($flight['scheduleTime'], strpos($flight['scheduleTime'], "T") +0,5);
@@ -138,51 +104,50 @@ https://api.schiphol.nl/public-flights/flights?app_id=$app_id&app_key=$app_key&&
 	$gateclosetime = substr($flight['expectedTimeGateClosing'], strpos($flight['expectedTimeGateClosing'], "T") +1,5);
 	$expboardingtime = substr($flight['expectedTimeBoarding'], strpos($flight['expectedTimeBoarding'], "T") +1,5);
 
-//	echo "<br />Gepland Vertrek ??: {$flight['scheduleTime']}";
-	echo "Vertrek: $plandeparttime"; 
-echo "<br />";
-//	echo "Gateopen: ??   {$flight['expectedTimeGateOpen']}";
-	echo "Gate open: $gateopentime";
- echo "<br />";
-	echo "Gate dicht: $gateclosetime";
- echo "<br />";
-	echo "Boarding: $expboardingtime";
- echo "<br />";
-//	echo "Boarding: ?? {$flight['expectedTimeBoarding']}";
- echo "<br />";
+	echo "Verwacht Vertrek: $plandeparttime"; 
 
-//     	echo "Gateclose: ?? {$flight['expectedTimeGateClosing']}";
+	echo "<br />";
+
+	if (!empty($gateopentime)){
+		echo "Gate open: $gateopentime";
+		echo "<br />";
+	}
+
+	if (!empty($gateclosetime)) {
+		echo "Gate dicht: $gateclosetime";
+		 echo "<br />";
+	}
+
+	if (!empty($expboardingtime)) {
+		echo "Boarding: $expboardingtime";
+		echo "<br />";
+	}
+
+	 echo "<br />";
 
 
 	$airline = $flight['prefixICAO'];
-
 	list($results, $headers) = doCurl("$base_url/public-flights/airlines/$airline?app_id=$app_id&app_key=$app_key&page=0");
 
-
         $json2 = json_decode($results, true);
-
 	$airlineName = ($json2{'publicName'});
 
-
+	if (!empty($airlineName)) {
 		 echo "$airlineName";
 
+	}
 	$iatamain= $flight['aircraftType']['iatamain'];
-	$iatasub = $flight['aircraftType']['iatasub'];
+        $iatasub = $flight['aircraftType']['iatasub'];
 
-		echo "<br />";
-
-	 list($results, $headers) = doCurl("$base_url/public-flights/aircrafttypes?app_id=$app_id&app_key=$app_key&iatamain=$iatamain&iatasub=$iatasub&page=0");
-                $json4 = json_decode($results, true);
+	list($results, $headers) = doCurl("$base_url/public-flights/aircrafttypes?app_id=$app_id&app_key=$app_key&iatamain=$iatamain&iatasub=$iatasub&page=0");
+        $json4 = json_decode($results, true);
 
 	$vliegtuigen = ($json4['aircraftTypes']);
 	$vliegtuig = $vliegtuigen[0]['longDescription'];
 	$vliegtuigtype = $vliegtuigen[0]['shortDescription'];
 
-        echo "<a href='https://www.google.nl/search?q=$vliegtuig&source=lnms&tbm=isch' target='_blank' title='toon vliegtuigfotos in nieuwe pagina'>$vliegtuig</a> <br />"; 
-//	echo "$vliegtuig <br /></td>";
-		
+        echo "<br /><a href='https://www.google.nl/search?q=$vliegtuig&source=lnms&tbm=isch' target='_blank' title='toon vliegtuigfotos in nieuwe pagina'>$vliegtuig</a> <br />"; 
 
-//	echo "<td><span style=\"color: blue;\">Code: {$flight['flightName']}</span>";
 	$vluchtnummer = $flight['flightName'];
 	echo "<td><a href='?p=".($page)."&scheduletime=&flightnumber=$vluchtnummer' title='Klik op de vluchtcode om deze vlucht in de gaten te houden'>Code: {$flight['flightName']}</a>";
         echo "<br />";
@@ -220,20 +185,44 @@ echo "<br />";
 //              echo "Registratie: {$flight['aircraftRegistration']}<br />";
 		echo "Code: {$flight['airlineCode']}<br /></td>";
 
-//Vertrektijd
-// Informatie niet tonen als waarden leeg zijn (nog doen).
  
     	        $offblocktime= substr($flight['publicEstimatedOffBlockTime'], strpos($flight['publicEstimatedOffBlockTime'], "T") +1,5);
-		$actualblocktime = substr($flight['actualOffBlockTime'], strpos($flight['actualOffBlockTime'], "T") +1,5); 
+		$actualblocktime = substr($flight['actualOffBlockTime'], strpos($flight['actualOffBlockTime'], "T") +1,5);
+		$offblockdate = substr($flight['publicEstimatedOffBlockTime'],0,10);
+		$offblockdateswitch = date('d-m-Y', strtotime($offblockdate));
+
+		$test= 	$flight['publicFlightState']['flightStates'][1];
+		if (empty($offblocktime)) {
+		echo "<td>";
+		$cancelled = $flight['publicFlightState']['flightStates'][0];
+
+		if ($cancelled <> "CNX") {
+                echo "Volgens planning: $plandeparttime";
+		}
+		else 
+		echo "<s>Volgens planning: $plandeparttime</s>";
+		echo "<br />";		
+		
+		}
+		else 
                 echo "<td>";
- 		echo "Nieuwe vertrektijd: $offblocktime <br />"; 
-// 		echo "<td>$etadateswitch - $eta <br />";
-//      	echo "Nieuwe vertrektijd: {$flight['publicEstimatedOffBlockTime']}";
-//		echo "<br />";
-		echo "geen tijd als vlucht nog niet vertrokken is";
-		echo "Vlucht vertrokken: $actualblocktime";
-//		 echo "Vlucht vertrokken om: {$flight['actualOffBlockTime']}";
-		 echo "<br />";
+		if (!empty($offblocktime)) {
+		echo "<span style=\"color: orange;\">Nieuwe vertrektijd: ";
+		if ($offblockdateswitch <> $vluchtdatum) {
+		echo "<br/>$offblockdateswitch </br> </span>";
+		}	
+ 		echo "<span style=\"color: orange;\">$offblocktime</span> <br />"; 
+
+		if ($offblocktime <> $plandeparttime) {
+	
+
+		echo "<span style=\"color: blue;\">Deze vlucht heeft vertraging</span><br  />";
+		}
+		}
+		if (!empty($actualblocktime)) {
+		echo "<span style=\"color: green;\">Vlucht is vertrokken om: $actualblocktime</span>";
+		echo "<br />";
+		}
 
 //	if ($datediff2arrival>0):
 //		echo "<span style=\"color: red;\">Grote vertraging:</span><br />"; /* $vertraging) <br />"; */
@@ -277,7 +266,7 @@ echo "</td>";
                         "LND" => "Vlucht is geland",
                         "FIR" => "Boven Nederland",
                         "AIR" => "Buiten Nederland ",
-                        "CNX" => "<span style=\"color: red;\" />Gecancelled</span>",
+                        "CNX" => "<span style=\"color: red;\" />Vlucht is geannuleerd</span>",
                         "FIB" => "<span style=\"color: orange;\" />Bagage verwacht</span>",
                         "ARR" => "Afgehandeld",
                         "TOM" => "Komt op andere datum",
@@ -290,7 +279,7 @@ echo "</td>";
                         "DEL" => "Vertraagd",
                         "WIL" => "Blijf wachten in de lounge",
                         "GTO" => "Gate open",
-                        "DEP" => "Vertrokken"
+                        "DEP" => "Vertrokken van locatie"
                 );
 
 //		if (isset($flight['publicFlightState']['flightStates'][1]) 
@@ -303,7 +292,7 @@ echo "</td>";
                         "LND" => "Vlucht is geland",
                         "FIR" => "Boven Nederland",
                         "AIR" => "Buiten Nederland ",
-                        "CNX" => "<span style=\"color: red;\" />Gecancelled</span>",
+                        "CNX" => "<span style=\"color: red;\" />Vlucht is geannuleerd</span>",
                         "FIB" => "<span style=\"color: orange;\" />Bagage verwacht</span>",
                         "ARR" => "Afgehandeld",
                         "TOM" => "Komt op andere datum",
@@ -316,7 +305,7 @@ echo "</td>";
 			"DEL" => "Vertraagd",
 			"WIL" => "Blijf wachten in de lounge",
 			"GTO" => "Gate open",
-			"DEP" => "Vertrokken"
+			"DEP" => "Vertrokken van locatie"
                 );
                 if (isset($flight['publicFlightState']['flightStates'][0])) {
                         if (array_key_exists($flight['publicFlightState']['flightStates'][0], $statuswaardes))
@@ -332,12 +321,17 @@ echo "</td>";
 
 	$checktimestart = substr($flight['checkinAllocations']['checkinAllocations'][0]['startTime'], strpos($flight['checkinAllocations']['checkinAllocations'][0]['startTime'], "T") +1,5);
 	$checktimeend =   substr($flight['checkinAllocations']['checkinAllocations'][0]['endTime'], strpos($flight['checkinAllocations']['checkinAllocations'][0]['endTime'], "T") +1,5);
-
 	$offblocktime= substr($flight['publicEstimatedOffBlockTime'], strpos($flight['publicEstimatedOffBlockTime'], "T") +1,5);
 
-	echo "Begintijd: $checktimestart ";
-	echo "<br />";
-	echo "Eindtijd: $checktimeend";
+
+	if (!empty($checktimestart)) { 
+	echo "Tussen: $checktimestart ";
+	echo "en "; //<br />";
+	echo "$checktimeend";
+	}
+	else 
+	echo "Geen check-in informatie beschikbaar";
+//	echo "Eindtijd: $checktimeend";
 //	echo "<br />";
 
 
@@ -461,7 +455,6 @@ echo "<br />";
         }
 
 
-
 // debug information [turn on when needed]
 
 
@@ -483,24 +476,9 @@ echo "$url";
 //echo "$eta2a";
 //echo "<br />";
 //echo "eta: $eta";
-echo "<br />";
-echo "testdatum 0 $testdatum0";
-echo "testdatum 4 $testdatum4";
-
-// indien kleiner dan 0
-
-echo "debuggen eerder aankomen over de dag terug en over de dag heen (laatste is vetraging)";
-echo "<br />";
-$negatief = strtotime($testdatum4) - strtotime($testdatum0);
-echo "uitrekenen van negatief $negatief";
-echo "<br />";
-if ($negatief <0) {
-	echo "De vlucht komt eerder aan";
-	}
-	else
-	echo "de vlucht komt later of is op tijd";
 
 echo "<br />";
+// echo "API @developer.schiphol.nl, PHP: een beetje van mezelf en veel van anderen (c) Dennis Slagers";
 echo "<br />";
 
 

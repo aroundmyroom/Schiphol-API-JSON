@@ -83,7 +83,7 @@ $("h1").replaceWith('<h1>Schiphol info</h1>');
 <br />
 <br />
 <br />
-<a href="./vertrek/">Vertrekkende vliegtuigen (werkt nog niet)</a><h1>
+<a href="./vertrek/">Vertrekkende vliegtuigen</a><h1>
 
 
 </body>
