@@ -55,7 +55,7 @@ body, select, input, textarea { color:#28271F; }
 h1,h2,h3,h4,h5,h6 { font-weight: bold; text-rendering: optimizeLegibility; }
 html { -webkit-font-smoothing: antialiased; }
 a:hover, a:active { outline: none; }
-a, a:active, a:visited { color:#607890; }
+a, a:active, a:visited { color:#0320f6; }
 a:hover { color:#036; text-decorations: none; }
 ul { margin-left:30px; }
 ol { margin-left:30px; list-style-type: decimal; }
@@ -217,11 +217,11 @@ table tbody td.hall, td.belt {
  */
 @media print {
   * { width: 20px; margin-left: auto; margin-right: auto; margin-top: auto; text-align: center; padding: 7px; background: transparent !important; color: #444 !important; text-shadow: none; }
-  a, a:visited { color: #444 !important; text-decoration: none; }
+  a, a:visited { color: #79caf2 !important; text-decoration: none; }
   a:after { content: " (" attr(href) ")"; }
   abbr:after { content: " (" attr(title) ")"; }
   .ir a:after { content: ""; }  /* Don't show links for images */
-  pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
+  pre, blockquote { border: 1px solid #79caf2; page-break-inside: avoid; }
   img { page-break-inside: avoid; }
   @page { margin: 0.5cm; }
   p, h2, h3 { orphans: 3; widows: 3; }
