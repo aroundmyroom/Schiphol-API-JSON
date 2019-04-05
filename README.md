@@ -2,7 +2,9 @@
 Credits: met dank aan Peter aka Zaph voor aanpassingen en tips die ik heb kunnen gebruiken.
 
 update April 2019
-Deze applicatie moet nog even bijgewerkt worden naar v4 van de API van Schphol. Er zijn een aantal wijzigingen hoe de API informatie doorgegeven moet worden alsmede de URLs die afgevuurd worden moeten wat meer info meegeven.
+
+Deze applicatie moet nog even bijgewerkt worden naar v4 van de API van Schphol. 
+Er zijn een aantal wijzigingen doorgevoerd hoe informatie uit de API doorgegeven moet worden alsmede de URLs die afgevuurd worden moeten wat meer info meegeven.
 
 
 March 2017
