@@ -15,7 +15,6 @@ date_default_timezone_set('Europe/Amsterdam');
 	unset($scheduletime);
 	$flightname = $_GET['flightnumber'];
         $today = date("Y-m-d");
-
 // wat last van bepaling van datum de dfrom bleek eerst niet te werken, later weer wel
 // als test was daarom eronder een $today neergezet
 

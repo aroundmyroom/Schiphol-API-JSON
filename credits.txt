@@ -1,5 +1,5 @@
 Credits:
-Peter aka ZAPH (Tweakers.net) voor pagination en optimalisaties code (berg van geleerd)
+Peter aka ZAPH (Tweakers.net) voor pagination en optimalisaties code (berg van geleerd), 
 Radiant, Daos, Krukar (Tweakers.net) om de moeite te nemen te antwoorden op de json vraag ;-)
 
 www.schiphol.nl & schipholapp.nl voor voorbeelden

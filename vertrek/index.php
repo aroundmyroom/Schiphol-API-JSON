@@ -6,7 +6,7 @@ require_once("../config.php");
 require_once("../functions/functions.php");
 
 if (count($_POST)) {
-                $url = "?p=0&scheduletime=".$_POST['scheduletime']."&flightnumber=".$_POST['flightnumber']."&dfrom=".$_POST['dfrom']."&delay=".$_POST['$delay'];
+                $url = "?p=0&scheduletime=".$_POST['scheduletime']."&flightnumber=".$_POST['flightnumber']."&scheduleDate=".$_POST['dfrom']."&delay=".$_POST['$delay'];
 
                 header("Location: $url");
                 exit;
@@ -127,20 +127,21 @@ $delay = "true";
 $delayT = "false";
 $delayY	= "false";
 
-	echo "<div id=\"data_invoer\">";
-	echo "<p id=\"invoer1\"></p>";
-	echo "<h1><a href='?p=".($page)."&scheduletime=$verwachtetijd&flightnumber=$flightname&dfrom=$today&delay=$delay'><b>Alle vluchten van vandaag (start: 00:00)</b></a>";
-	echo "<br /><br />";
-	echo "<a href='?p=".($page)."&scheduletime=$verwachtetijd&flightnumber=$flightname&dfrom=$yesterday&delay=$delayY'><b>Alle vluchten van gisteren (start: 00:0)</b></a>";
-	echo "        |         ";
-	echo "<a href='?p=".($page)."&scheduletime=$verwachtetijd&flightnumber=$flightname&dfrom=$tomorrow&delay=$delayT'><b>Alle vluchten van morgen (start: 00:00)</b></a></h1>";
-	echo "</div>";
+        echo "<div id=\"data_invoer\">";
+        echo "<p id=\"invoer1\"></p>";
+        echo "<h1><a href='?p=".($page)."&scheduletime=$verwachtetijd&flightnumber=$flightname&dfrom=$today&delay=$delay'><b>Alle vluchten van vandaag (start: 00:00)</b></a>";
+        echo "<br /><br />";
+        echo "<a href='?p=".($page)."&scheduletime=$verwachtetijd&flightnumber=$flightname&dfrom=$yesterday&delay=$delayY'><b>Alle vluchten van gisteren (start: 00:0)</b></a>";
+        echo "        |         ";
+        echo "<a href='?p=".($page)."&scheduletime=$verwachtetijd&flightnumber=$flightname&dfrom=$tomorrow&delay=$delayT'><b>Alle vluchten van morgen (start: 00:00)</b></a></h1>";
+        echo "</div>";
 
 ?>
 
 <?php
 unset($scheduletime);
 ?>
+
 
 <!-- dit kan beter -->
 <br /><br /><br /><br /><br /><br /><br /><br />

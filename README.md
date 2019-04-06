@@ -1,14 +1,25 @@
 # Schiphol-API-JSON
-Credits: met dank aan Peter aka Zaph voor aanpassingen en tips die ik heb kunnen gebruiken.
 
-update April 2019
+Update APRIL 2019
+Schiphol heeft de API bijgewerkt naar versie 4
+Hierdoor waren aanpassingen nodig om deze applicatie weer bijgewerkte data te kunnen laten zien
 
-Deze applicatie moet nog even bijgewerkt worden naar v4 van de API van Schphol. 
-Er zijn een aantal wijzigingen doorgevoerd hoe informatie uit de API doorgegeven moet worden alsmede de URLs die afgevuurd worden moeten wat meer info meegeven.
+Aangepast:
+- de aanroep van de de API. API gegevens via headers doorsturen
+Tikfout in het voorbeeld script van developer.schiphol.nl gevonden en doorgegeven.
+Omdat niets meer werkte wil je via een voorbeeldscript de data binnen krijgen zodat je van daaruit verder kan bouwen
+alleen dat ging niet omdat de API key niet door kwam (een :  was vergeten in het voorbeeld script)
+
+- de gebruikte URL's aangepast omdat bepaalde variabelen nu stricter gevraagd worden waaronder 'scheduleDate'
+- Bij het opvragen van een tijd moet de datum mee, dit is toegevoegd
+- meer debug informatie verwerkt in de scripts zodat het zoeken wat makkelijker gaat
+
+
 
 
 March 2017
 Begonnen met niets... (en ik kan ook niet programmeren), dus weet ik wat ik doe? waarschijnlijk niet
+Credits: met dank aan Peter aka Zaph voor aanpassingen en tips die ik heb kunnen gebruiken.
 
 Is de code gestructureerd? Kan vast en zeker beter. Code is compleet met NANO (linux) geschreven.
 

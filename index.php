@@ -1,4 +1,5 @@
 <?php
+// geen aanpassingen nodig geweest voor v4 van de API van Schiphol
 error_reporting(E_ERROR + E_WARNING + E_STRICT);
 ini_set("display_errors", 1);
 date_default_timezone_set('Europe/Amsterdam');

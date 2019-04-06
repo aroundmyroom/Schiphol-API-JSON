@@ -127,6 +127,8 @@ $delay = "true";
 $delayT = "false";
 $delayY	= "false";
 
+// variabelen worden doorgegeven aan aankomst.php en vertrek.php
+
 	echo "<div id=\"data_invoer\">";
 	echo "<p id=\"invoer1\"></p>";
 	echo "<h1><a href='?p=".($page)."&scheduletime=$verwachtetijd&flightnumber=$flightname&dfrom=$today&delay=$delay'><b>Alle vluchten van vandaag (start: 00:00)</b></a>";

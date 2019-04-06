@@ -11,7 +11,9 @@ date_default_timezone_set('Europe/Amsterdam');
 	$verwachtetijd = $_GET['scheduletime'];
 	unset($scheduletime);
 	$flightname = $_GET['flightnumber'];
+        $today = date("Y-m-d");
         $dfrom = $_GET['dfrom'];
+//      $dfrom = $today;
         $delayurl = $_GET['delay'];
 
 	header('content-type: text/html; charset: utf-8');
@@ -37,7 +39,6 @@ date_default_timezone_set('Europe/Amsterdam');
 <!--                 <h1><a href="../" style="text-decoration: none">Vertrekken</a></h1> -->
 
    <h1><img src="../css/airplane_departure.png" width='75' alt='Vertrekken'><a href="./" style="text-decoration: none">Vertrekken</a>  <img src="../css/departures.png" width='75'></h1> 
-
 		
 		 </header>
 
@@ -57,14 +58,14 @@ date_default_timezone_set('Europe/Amsterdam');
 EOT;
 
 session_start();
-	 $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightdirection=D&includedelays=$delayurl&page=$page&sort=%2Bscheduletime&fromdate=$dfrom&todate=$dfrom";
-		if (!empty($flightname))
-	$url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&flightname=$flightname&flightdirection=D&includedelays=true&fromdate=$dfrom&sort=%2Bscheduletime";
-		 if (!empty($verwachtetijd))
-        $url = "$base_url/public-flights/flights?app_id=$app_id&app_key=$app_key&scheduletime=$verwachtetijd&flightdirection=D&includedelays=true&page=$page&sort=%2Bscheduletime&fromdate=$dfrom";
+ 
+        $url = "$base_url/public-flights/flights?flightdirection=D&includedelays=$delayurl&page=$page&ScheduleDate=$dfrom";
+                if (!empty($flightname))
+        $url = "$base_url/public-flights/flights?flightname=$flightname&flightdirection=D&includedelays=true&Scheduledate=$today";
+                 if (!empty($verwachtetijd))
+        $url = "$base_url/public-flights/flights?scheduletime=$verwachtetijd&flightdirection=D&includedelays=true&page=$page&scheduleDate=$today";
 
-
-		list($result, $headers) = doCurl($url, 'v3');
+		list($result, $headers) = doCurl($url, 'v4');
 		preg_match_all('~<(.*)>; rel="(.*)"~Us', $headers['link'], $matches, PREG_SET_ORDER);
 		$json = json_decode($result, true);
 
@@ -75,7 +76,8 @@ session_start();
 	echo "<table id=\"departures\">";
 	echo "		<thead>";
 	echo "		<tr>";
-	echo "		<th>Planning</th>";
+        echo "";
+	echo "		<th>Planning $dfrom</th>";
 	echo "		<th>Vluchtinfo</th>";
 	echo "		<th>Vertrektijd</th>";
 	echo "		<th>Vertrek locatie</th>";
@@ -83,7 +85,6 @@ session_start();
 	echo "		<th>Bestemming</th>";
 	echo "		</tr>";
 	echo "		</thead>";
-
 	echo "<tbody>";
 	$vluchtdatum = date('d-m-Y', strtotime($flight['scheduleDate']));
      	$date = date("d.m.Y");
@@ -448,9 +449,9 @@ echo "<br />";
         
 	else {
 
-	echo "<a href='?p=".($page-1)."&scheduletime=$verwachtetijd&flightnumber=$flightname&dfrom=$dfrom&delay=$delayurl'>Vorige Pagina</a>";
+	echo "<a href='?p=".($page-1)."&scheduletime=$verwachtetijd&flightnumber=$flightname&scheduleDate=$dfrom&delay=$delayurl'>Vorige Pagina</a>";
         echo "   |   ";
-        echo "<a href='?p=".($page+1)."&scheduletime=$verwachtetijd&flightnumber=$flightname&dfrom=$dfrom&delay=$delayurl'>Volgende Pagina</a>";
+        echo "<a href='?p=".($page+1)."&scheduletime=$verwachtetijd&flightnumber=$flightname&ScheduleDate=$dfrom&delay=$delayurl'>Volgende Pagina</a>";
 	echo "<br />";
         }
 
