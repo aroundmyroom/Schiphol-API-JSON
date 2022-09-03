@@ -1,5 +1,9 @@
 # Schiphol-API-JSON
 
+a lot has changed with the Schiphole API and this is not in use anymore. It was an expiriment to see if I could ' code ' .. this script worked, but too much hassle
+therefore in 2022 I decided to archive this repository
+
+
 Update APRIL 2019
 Schiphol heeft de API bijgewerkt naar versie 4
 Hierdoor waren aanpassingen nodig om deze applicatie weer bijgewerkte data te kunnen laten zien
